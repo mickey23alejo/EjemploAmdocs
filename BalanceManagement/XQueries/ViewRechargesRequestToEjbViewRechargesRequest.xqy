@@ -46,3 +46,24 @@ declare function local:viewRechargesRequestToEjbViewRechargesRequest($viewRechar
 };
 
 local:viewRechargesRequestToEjbViewRechargesRequest($viewRechargesRequest)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
