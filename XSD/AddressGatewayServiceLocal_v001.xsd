@@ -1,0 +1,830 @@
+<!-- Version History 
+Author  Date       Version  Remarks
+Anurag  12-05-2016 V10      UAT 5 Defect #1365, aligned description field as optional and length to 100 in retrievalGeneralStatus 
+Anurag  15-09-2016 V11      AI3252 Defect #3340
+-->
+<xsd:schema targetNamespace="http://telefonica.cl/LocationManagement/Address/V1/types" elementFormDefault="qualified"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:tns="http://telefonica.cl/LocationManagement/Address/V1/types"
+            xmlns:Q5="http://telefonica.cl/TefRequestHeader/V1" xmlns:Q6="http://telefonica.cl/TefResponseHeader/V1"
+            xmlns:Q1="http://telefonica.cl/TefError/V1">
+            
+  <xsd:import schemaLocation="../../AmdocsCommon/XSD/TefResponseHeaderCl_v001.xsd" namespace="http://telefonica.cl/TefResponseHeader/V1"/>
+  <xsd:import schemaLocation="../../AmdocsCommon/XSD/TefErrorCl_v001.xsd" namespace="http://telefonica.cl/TefError/V1"/>
+  <xsd:import schemaLocation="../../AmdocsCommon/XSD/TefRequestHeaderCl_v001.xsd" namespace="http://telefonica.cl/TefRequestHeader/V1"/>
+  
+    
+  <xsd:element name="RequestEmailValidationRequest" type="tns:RequestEmailValidationRequest_Type"/>
+  <xsd:complexType name="RequestEmailValidationRequest_Type">
+    <xsd:complexContent>
+      <xsd:extension base="Q5:TefHeaderReq">
+        <xsd:sequence>
+          <xsd:element name="RequestEmailValidationRequest_Data" type="tns:RequestEmailValidationRequest_Data_Type" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="RequestEmailValidationRequest_Data_Type">
+    <xsd:sequence>
+		<xsd:element name="identification" type="tns:Identification" minOccurs="1" maxOccurs="1"/> 
+		<xsd:element name="firstName" minOccurs="1" maxOccurs="1">
+		  <xsd:simpleType>
+		    <xsd:restriction base="xsd:string">
+		      <xsd:maxLength value="30"/>
+		    </xsd:restriction>
+		  </xsd:simpleType>
+		</xsd:element>  
+      <xsd:element name="lastName" minOccurs="1" maxOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="30"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element> 
+		<xsd:element name="entity" type="tns:GenericEntity" minOccurs="1" maxOccurs="1"/>  
+		<xsd:element name="correlation" type="tns:Correlation" minOccurs="0" maxOccurs="1"/>  
+		<xsd:element name="emailAddress" type="tns:EmailAddress" minOccurs="1" maxOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType> 
+
+  <xsd:complexType name="Identification">
+  	<xsd:sequence>
+		<xsd:element name="identificationType" minOccurs="1" maxOccurs="1">
+		    <xsd:simpleType>
+		      <xsd:restriction base="xsd:string">
+		        <xsd:maxLength value="10"/>
+		      </xsd:restriction>
+		    </xsd:simpleType>		  
+		</xsd:element>
+  	<xsd:element name="identificationCode" minOccurs="0" maxOccurs="1">
+  	  <xsd:simpleType>
+  	    <xsd:restriction base="xsd:string">
+  	      <xsd:maxLength value="1"/>
+  	    </xsd:restriction>
+  	  </xsd:simpleType>
+  	</xsd:element>
+		<xsd:element name="identificationNumber" minOccurs="1" maxOccurs="1">
+		  <xsd:simpleType>
+		    <xsd:restriction base="xsd:string">
+		      <xsd:maxLength value="10"/>
+		    </xsd:restriction>
+		  </xsd:simpleType>
+		</xsd:element>
+	</xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="GenericEntity">
+  	<xsd:sequence>
+		<xsd:element name="entityType" minOccurs="1" maxOccurs="1">
+		  <xsd:simpleType>
+		    <xsd:restriction base="xsd:string">
+		      <xsd:maxLength value="10"/>
+		    </xsd:restriction>
+		  </xsd:simpleType>
+		</xsd:element>
+		<xsd:element name="entityId" minOccurs="1" maxOccurs="1">
+		  <xsd:simpleType>
+		    <xsd:restriction base="xsd:string">
+		      <xsd:maxLength value="12"/>
+		    </xsd:restriction>
+		  </xsd:simpleType>
+		</xsd:element>
+	</xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="Correlation">
+  	<xsd:sequence>
+		<xsd:element name="correlationId" minOccurs="0" maxOccurs="1">
+		  <xsd:simpleType>
+		    <xsd:restriction base="xsd:string">
+		      <xsd:maxLength value="255"/>
+		    </xsd:restriction>
+		  </xsd:simpleType>
+		</xsd:element>
+	</xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="EmailAddress">
+  	<xsd:sequence>
+		<xsd:element name="eMailAddress" minOccurs="1" maxOccurs="1">
+		  <xsd:simpleType>
+		    <xsd:restriction base="xsd:string">
+		      <xsd:maxLength value="500"/>
+		    </xsd:restriction>
+		  </xsd:simpleType>
+		</xsd:element>
+	</xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="RequestEmailValidationResponse" type="tns:RequestEmailValidationResponse_Type"/>
+  <xsd:complexType name="RequestEmailValidationResponse_Type">
+    <xsd:complexContent>
+      <xsd:extension base="Q6:TefHeaderRes">
+        <xsd:sequence>
+          <xsd:element name="RequestEmailValidationResponse_Data" type="tns:RequestEmailValidationResponse_Data_Type" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="RequestEmailValidationResponse_Data_Type">
+    <xsd:sequence>
+		<xsd:element name="acknowledge" type="tns:Acknowledge" minOccurs="1" maxOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="Acknowledge">
+  	<xsd:sequence>
+		<xsd:element name="isSuccess" type="xsd:boolean" minOccurs="1" maxOccurs="1"/>
+	</xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="RequestEmailValidationFault" type="tns:RequestEmailValidationFaultType"/>
+  <xsd:complexType name="RequestEmailValidationFaultType">
+    <xsd:sequence>
+      <xsd:element name="Error" type="Q1:errorTraceType" minOccurs="1" maxOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:element name="UpdateEmailValidationStatusRequest" type="tns:UpdateEmailValidationStatusRequest_Type"/>
+  <xsd:complexType name="UpdateEmailValidationStatusRequest_Type">
+    <xsd:complexContent>
+      <xsd:extension base="Q5:TefHeaderReq">
+        <xsd:sequence>
+          <xsd:element name="UpdateEmailValidationStatusRequest_Data" type="tns:UpdateEmailValidationStatusRequest_Data_Type" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="UpdateEmailValidationStatusRequest_Data_Type">
+    <xsd:sequence>
+    	<xsd:element name="entity" type="tns:GenericEntity" minOccurs="1" maxOccurs="1"/>  
+		<xsd:element name="emailAddress" type="tns:EmailAddress" minOccurs="1" maxOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:element name="UpdateEmailValidationStatusResponse" type="tns:UpdateEmailValidationStatusResponseType"/>
+  <xsd:complexType name="UpdateEmailValidationStatusResponseType">
+    <xsd:complexContent>
+      <xsd:extension base="Q6:TefHeaderRes">
+        <xsd:sequence>
+          <xsd:element name="UpdateEmailValidationStatusResponseData" type="tns:UpdateEmailValidationStatusResponseDataType" minOccurs="1" maxOccurs="1"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="UpdateEmailValidationStatusResponseDataType">
+    <xsd:sequence>
+    	<xsd:element name="acknowledge" type="tns:Acknowledge" minOccurs="1" maxOccurs="1"/>  
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="UpdateEmailValidationStatusFault" type="tns:UpdateEmailValidationStatusFaultType"/>
+  <xsd:complexType name="UpdateEmailValidationStatusFaultType">
+    <xsd:sequence>
+      <xsd:element name="Error" type="Q1:errorTraceType" minOccurs="1" maxOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+             
+  <xsd:element name="ValidateAddressRequest" type="tns:ValidateAddressRequest_type"/>
+  <xsd:complexType name="ValidableChileanAddress">
+    <xsd:sequence>
+      <xsd:element name="regionalDivisions" type="tns:ValidableChileanGeographicAddress" maxOccurs="1" minOccurs="1"></xsd:element>
+      <xsd:element name="addressDetails" type="tns:ValidableChileanUrbanPropertyAddress" maxOccurs="1" minOccurs="1"></xsd:element>
+      <xsd:element name="housingComplex" type="tns:ValidableChileanUrbanPropertySubAddress" maxOccurs="1" minOccurs="0"></xsd:element>
+      <xsd:element name="poBox" type="tns:ValidablePoBoxAddress" maxOccurs="1" minOccurs="0"></xsd:element>
+      <xsd:element name="additionalComments" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="100"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="addressType" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ValidableChileanGeographicAddress">
+    <xsd:sequence>
+      <xsd:element name="country" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="stateOrProvince" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="commune" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ValidableChileanUrbanPropertyAddress">
+    <xsd:sequence>
+      <xsd:element name="locality" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="streetName" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="64"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="streetNrFirst" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="18"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="block" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="postcode" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="10"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ValidableChileanUrbanPropertySubAddress">
+    <xsd:sequence>
+      <xsd:element name="levelNr" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="3"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="subUnitNr" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="10"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="housingComplexType" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="housingComplexName" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ValidablePoBoxAddress">
+    <xsd:sequence>
+      <xsd:element name="boxNr" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="64"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ValidateAddressResponse" type="tns:ValidateAddressResponse_type"/>
+  <xsd:complexType name="ValidationGeneralStatus">
+    <xsd:sequence>
+      <xsd:element name="code" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="10"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="description" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="100"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ChileanAddress">
+    <xsd:sequence>
+      <xsd:element name="normalizationCode" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="18"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="regionalDivisions" type="tns:ChileanGeographicAddress" maxOccurs="1" minOccurs="1"></xsd:element>
+      <xsd:element name="addressDetails" type="tns:ChileanUrbanPropertyAddress" maxOccurs="1" minOccurs="1"></xsd:element>
+      <xsd:element name="housingComplex" type="tns:ChileanUrbanPropertySubAddress" maxOccurs="1" minOccurs="0"></xsd:element>
+      <xsd:element name="poBox" type="tns:PoBoxAddress" maxOccurs="1" minOccurs="0"></xsd:element>
+      <xsd:element name="coordinates" type="tns:Coordinates" maxOccurs="1" minOccurs="0"></xsd:element>
+      <xsd:element name="additionalComments" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="100"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="addressType" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="Coordinates">
+    <xsd:sequence>
+      <xsd:element name="x" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="25"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="y" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="25"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="ValidateAddressFault" type="tns:ValidateAddressFault_type"/>
+  <xsd:element name="RetrieveAddressInformationRequest" type="tns:RetrieveAddressInformationRequestType"/>
+  <xsd:element name="RetrieveAddressInformationResponse" type="tns:RetrieveAddressInformationResponse_type"/>
+  <xsd:complexType name="RetrievalGeneralStatus">
+    <xsd:sequence>
+      <xsd:element name="code" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="10"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="description" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="100"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="AddressInfo">
+    <xsd:sequence>
+      <xsd:element name="code" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="25"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="description" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="60"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="name" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="9"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="characteristicValue" type="tns:CharacteristicValue" maxOccurs="1" minOccurs="1"></xsd:element>
+      <xsd:element name="isRestrictive" type="xsd:boolean" maxOccurs="1" minOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="RetrieveAddressInformationFault" type="tns:RetrieveAddressInformationFault_type"/>
+  <xsd:complexType name="RetrieveAddressInformationRequestType">
+    <xsd:complexContent>
+      <xsd:extension base="Q5:TefHeaderReq">
+        <xsd:sequence>
+          <xsd:element name="RetrieveAddressInformationRequest_data"
+                       type="tns:RetrieveAddressInformationRequest_data_type" maxOccurs="1" minOccurs="1"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="RetrieveAddressInformationRequest_data_type">
+    <xsd:sequence>
+      <xsd:element name="addressCode" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="18"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RetrieveAddressInformationResponse_type">
+    <xsd:complexContent>
+      <xsd:extension base="Q6:TefHeaderRes">
+        <xsd:sequence>
+          <xsd:element name="RetrieveAddressInformationResponse_data"
+                       type="tns:RetrieveAddressInformationResponse_data_type" maxOccurs="1" minOccurs="1"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="RetrieveAddressInformationResponse_data_type">
+    <xsd:sequence>
+      <xsd:element name="addressCode" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="18"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="infoDetails" type="tns:AddressInfoList" maxOccurs="1" minOccurs="0"/>
+      <xsd:element name="generalStatus" type="tns:RetrievalGeneralStatus" maxOccurs="1" minOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="CharacteristicValue">
+    <xsd:sequence>
+      <xsd:element name="value" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="9"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RetrieveAddressInformationFault_type">
+    <xsd:sequence>
+      <xsd:element name="Error" type="Q1:errorTraceType" maxOccurs="1" minOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="AddressInfoList">
+    <xsd:sequence>
+      <xsd:element name="addressInfo" type="tns:AddressInfo" maxOccurs="unbounded" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ValidateAddressFault_type">
+    <xsd:sequence>
+      <xsd:element name="Error" type="Q1:errorTraceType" maxOccurs="1" minOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ValidateAddressRequest_type">
+    <xsd:complexContent>
+      <xsd:extension base="Q5:TefHeaderReq">
+        <xsd:sequence>
+          <xsd:element name="ValidateAddressRequest_data" type="tns:ValidateAddressRequest_data_type"
+                       maxOccurs="1" minOccurs="1"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ValidateAddressRequest_data_type">
+    <xsd:sequence>
+      <xsd:element name="address" type="tns:ValidableChileanAddress" maxOccurs="1" minOccurs="0"/>
+      <xsd:element name="normalizationCode" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="18"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="isForShipment" type="xsd:boolean" maxOccurs="1" minOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ValidateAddressResponse_type">
+    <xsd:complexContent>
+      <xsd:extension base="Q6:TefHeaderRes">
+        <xsd:sequence>
+          <xsd:element name="ValidateAddressResponse_data" type="tns:ValidateAddressResponse_data_type"
+                       maxOccurs="1" minOccurs="1"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ValidateAddressResponse_data_type">
+    <xsd:sequence>
+      <xsd:element name="generalStatus" type="tns:ValidationGeneralStatus" maxOccurs="1" minOccurs="1"/>
+      <xsd:element name="validatedAddresses" type="tns:ChileanAddressList" maxOccurs="1" minOccurs="0"/>
+      <xsd:element name="normalizationCode" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="18"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="isValid" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="isRedZone" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="isBlacklisted" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="1"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ChileanAddressList">
+    <xsd:sequence>
+      <xsd:element name="Address" type="tns:ChileanAddress" maxOccurs="unbounded" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ChileanGeographicAddress">
+    <xsd:sequence>
+      <xsd:element name="country" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="stateOrProvince" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="commune" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ChileanUrbanPropertyAddress">
+    <xsd:sequence>
+      <xsd:element name="locality" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="streetName" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="64"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="streetNrFirst" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="18"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="block" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="postcode" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="10"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="betweenStreet1" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="64"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="betweenStreet2" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="64"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ChileanUrbanPropertySubAddress">
+    <xsd:sequence>
+      <xsd:element name="levelNr" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="3"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="subUnitNr" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="10"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="housingComplexType" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="housingComplexName" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="40"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="PoBoxAddress">
+    <xsd:sequence>
+      <xsd:element name="boxNr" maxOccurs="1" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="64"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="RetrieveDistrictsRequest" type="tns:RetrieveDistrictsRequest_type"></xsd:element>
+  <xsd:element name="RetrieveDistrictsResponse" type="tns:RetrieveDistrictsResponse_type"></xsd:element>
+  <xsd:complexType name="RetrievedDistrictCommuneList">
+    <xsd:sequence>
+      <xsd:element name="districtsCommunes" type="tns:RetrievedDistrictCommune" minOccurs="1" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RetrievedDistrictCommune">
+    <xsd:sequence>
+      <xsd:element name="code" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="10"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="name" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="100"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RetrievedDistrictsCommunesStatus">
+    <xsd:sequence>
+      <xsd:element name="code" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="10"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="description" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:maxLength value="100"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element name="RetrieveDistrictsFault" type="tns:RetrieveDistrictsFault_type"></xsd:element>
+  <xsd:complexType name="RetrieveDistrictsRequest_type">
+    <xsd:complexContent>
+      <xsd:extension base="Q5:TefHeaderReq">
+        <xsd:sequence>
+          <xsd:element name="RetrieveDistrictsRequest_data" type="tns:RetrieveDistrictsRequest_data_type" maxOccurs="1"
+                       minOccurs="1"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DepartmentRegionForDistricts">
+    <xsd:sequence>
+      <xsd:element name="code" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="10"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RetrieveDistrictsFault_type">
+    <xsd:sequence>
+      <xsd:element name="Error" type="Q1:errorTraceType" maxOccurs="1" minOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ProvinceForDistricts">
+    <xsd:sequence>
+      <xsd:element name="code" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="10"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RetrieveDistrictsResponse_type">
+    <xsd:complexContent>
+      <xsd:extension base="Q6:TefHeaderRes">
+        <xsd:sequence>
+          <xsd:element name="RetrieveDistrictsResponse_data" type="tns:RetrieveDistrictsResponse_data_type"
+                       maxOccurs="1" minOccurs="1"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="RetrieveDistrictsRequest_data_type">
+    <xsd:sequence>
+      <xsd:element name="departmentRegion" type="tns:DepartmentRegionForDistricts" maxOccurs="1" minOccurs="1"/>
+      <xsd:element name="province" type="tns:ProvinceForDistricts" maxOccurs="1" minOccurs="0"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="RetrieveDistrictsResponse_data_type">
+    <xsd:sequence>
+      <xsd:element name="districtsCommunes" type="tns:RetrievedDistrictCommuneList" maxOccurs="1" minOccurs="1"/>
+      <xsd:element name="status" type="tns:RetrievedDistrictsCommunesStatus" maxOccurs="1" minOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="DepartmentForProvinces">
+    <xsd:sequence>
+      <xsd:element name="code" maxOccurs="1" minOccurs="1">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:minLength value="1"/>
+            <xsd:maxLength value="2"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>
