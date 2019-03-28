@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:pipelineEntry xmlns:con="http://www.bea.com/wli/sb/pipeline/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:con1="http://www.bea.com/wli/sb/stages/config" xmlns:con2="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config">
+    <con:coreEntry>
+        <con:binding type="SOAP" isSoap12="false" xsi:type="con:SoapBindingType">
+            <con:wsdl ref="TelefonicaDCO/WSDL/dco2msclSoapService (1)"/>
+            <con:binding>
+                <con:name>dco2msclBinding</con:name>
+                <con:namespace>http://ws.tiaxa.net/dco2msclSoapService/</con:namespace>
+            </con:binding>
+        </con:binding>
+        <oper:operations xmlns:oper="http://xmlns.oracle.com/servicebus/pipeline/operations" xmlns:cus="http://www.bea.com/wli/config/customizations" xmlns:xt="http://www.bea.com/wli/config/xmltypes">
+            <oper:tracingEnabled>true</oper:tracingEnabled>
+        </oper:operations>
+        <con:xqConfiguration>
+            <con:snippetVersion>1.0</con:snippetVersion>
+        </con:xqConfiguration>
+    </con:coreEntry>
+    <con:router errorHandler="error-a0a0a74.281ac042.0.150a5873aad.N779b">
+        <con:pipeline type="request" name="request-a0a0a74.281ac042.0.150a5873aad.N7a3b" xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config">
+            <con:stage id="_StageId-a0a0a74.281ac042.0.150a5873aad.N7a3a" name="StageVarSetup" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config">
+                <con:context>
+                    <con6:userNsDecl prefix="v1" namespace="http://telefonica.pe/TefRequestHeader/V1" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+                    <con6:userNsDecl prefix="typ" namespace="http://telefonica.pe/CustomerInformationManagement/CustomerInformation/V1/types" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+                </con:context>
+                <con:actions>
+                    <con1:assign varName="bodyReq">
+                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a0a0a74.281ac042.0.150a5873aad.N7a39</con6:id>
+                        <con1:expr>
+                            <con2:xqueryText xmlns:con4="http://www.bea.com/wli/sb/stages/config">$body</con2:xqueryText>
+                        </con1:expr>
+                    </con1:assign>
+                    <con1:assign varName="transactionID">
+                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a0a0a74.281ac042.0.150a5873aad.N7a38</con6:id>
+                        <con1:expr>
+                            <con2:xqueryText xmlns:con6="http://www.bea.com/wli/sb/stages/config">fn:data($inbound/ctx:transport/ctx:request/tp:headers/tp:user-header[@name='transactionID']/@value)</con2:xqueryText>
+                        </con1:expr>
+                    </con1:assign>
+                </con:actions>
+            </con:stage>
+            <con:stage id="_StageId-N53efdcf5.e8262bf.0.15264978565.N7974" name="FixForErrorHandler" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con2="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/transform/config">
+                <con:context>
+                    <con1:userNsDecl prefix="v1" namespace="http://telefonica.cl/TefRequestHeader/V1"/>
+                </con:context>
+                <con:disabled>true</con:disabled>
+                <con:actions>
+                    <con1:insert varName="bodyReq" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con5="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config">
+                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-N53efdcf5.e8262bf.0.15264978565.N7973</con6:id>
+                        <con1:where>first-child</con1:where>
+                        <con1:expr>
+                            <con6:xqueryText xmlns:con6="http://www.bea.com/wli/sb/stages/config">&lt;v1:TefHeaderReq/></con6:xqueryText>
+                        </con1:expr>
+                    </con1:insert>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="response" name="response-a0a0a74.281ac042.0.150a5873aad.N7a37" xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config">
+            <con:stage id="_StageId-a0a0a74.281ac042.0.150a5873aad.N7a36" name="StageVarDispose" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con2="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con5="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config">
+                <con:context/>
+                <con:actions>
+                    <con3:delete varName="bodyReq">
+                        <con1:id>_ActionId-a0a0a74.281ac042.0.150a5873aad.N7a35</con1:id>
+                    </con3:delete>
+                    <con3:delete varName="transactionID">
+                        <con1:id>_ActionId-a0a0a74.281ac042.0.150a5873aad.N7a34</con1:id>
+                    </con3:delete>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="error" name="error-a0a0a74.281ac042.0.150a5873aad.N779b">
+            <con:stage id="_StageId-a0a0a74.281ac042.0.150a5873aad.N779a" name="ReplyError">
+                <con:context/>
+                <con:actions>
+                    <con1:reply isError="true">
+                        <con1:id>_ActionId-a0a0a74.281ac042.0.150a5873aad.N7797</con1:id>
+                    </con1:reply>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:flow>
+            <con:pipeline-node name="INT_PipelinePairVarSetup" xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config">
+                <con:request>request-a0a0a74.281ac042.0.150a5873aad.N7a3b</con:request>
+                <con:response>response-a0a0a74.281ac042.0.150a5873aad.N7a37</con:response>
+            </con:pipeline-node>
+            <con:route-node name="INT_NotifyRechtoDCO_Route">
+                <con:context/>
+                <con:actions>
+                    <con2:route>
+                        <con1:id>_ActionId-a0a0a74.281ac042.0.150a5873aad.N7806</con1:id>
+                        <con2:service ref="BalanceManagement/BusinesServices/INT_NotifyRechtoDCO_BS" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                        <con2:operation>NotifyRecharge</con2:operation>
+                        <con2:outboundTransform/>
+                        <con2:responseTransform></con2:responseTransform>
+                    </con2:route>
+                </con:actions>
+            </con:route-node>
+        </con:flow>
+    </con:router>
+</con:pipelineEntry>

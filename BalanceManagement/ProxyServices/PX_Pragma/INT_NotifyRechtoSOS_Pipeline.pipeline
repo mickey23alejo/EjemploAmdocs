@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:pipelineEntry xmlns:con="http://www.bea.com/wli/sb/pipeline/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:con1="http://www.bea.com/wli/sb/stages/config" xmlns:con2="http://www.bea.com/wli/sb/stages/routing/config">
+    <con:coreEntry>
+        <con:binding type="SOAP" isSoap12="false" xsi:type="con:SoapBindingType">
+            <con:wsdl ref="TelefonicaSOS/WSDL/NotifyRechtoSOS"/>
+            <con:binding>
+                <con:name>ZweicomSoapBinding</con:name>
+                <con:namespace>http://www.zweicom.com/wsdl/cobrorecarga.wsdl</con:namespace>
+            </con:binding>
+        </con:binding>
+        <oper:operations xmlns:oper="http://xmlns.oracle.com/servicebus/pipeline/operations" xmlns:cus="http://www.bea.com/wli/config/customizations" xmlns:xt="http://www.bea.com/wli/config/xmltypes">
+            <oper:tracingEnabled>true</oper:tracingEnabled>
+        </oper:operations>
+        <con:xqConfiguration>
+            <con:snippetVersion>1.0</con:snippetVersion>
+        </con:xqConfiguration>
+    </con:coreEntry>
+    <con:router errorHandler="error-a0a0a74.281ac042.0.150a5873aad.N77d1">
+        <con:pipeline type="request" name="request-a0a0a74.281ac042.0.150a5873aad.N7917" xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config">
+            <con:stage id="_StageId-a0a0a74.281ac042.0.150a5873aad.N7916" name="StageVarSetup" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config">
+                <con:context>
+                    <con6:userNsDecl prefix="v1" namespace="http://telefonica.pe/TefRequestHeader/V1" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+                    <con6:userNsDecl prefix="typ" namespace="http://telefonica.pe/CustomerInformationManagement/CustomerInformation/V1/types" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+                </con:context>
+                <con:actions>
+                    <con1:assign varName="bodyReq">
+                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a0a0a74.281ac042.0.150a5873aad.N7915</con6:id>
+                        <con1:expr>
+                            <con2:xqueryText xmlns:con4="http://www.bea.com/wli/sb/stages/config">$body</con2:xqueryText>
+                        </con1:expr>
+                    </con1:assign>
+                    <con1:assign varName="transactionID">
+                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a0a0a74.281ac042.0.150a5873aad.N7914</con6:id>
+                        <con1:expr>
+                            <con2:xqueryText xmlns:con6="http://www.bea.com/wli/sb/stages/config">fn:data($inbound/ctx:transport/ctx:request/tp:headers/tp:user-header[@name='transactionID']/@value)</con2:xqueryText>
+                        </con1:expr>
+                    </con1:assign>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="response" name="response-a0a0a74.281ac042.0.150a5873aad.N7913" xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config">
+            <con:stage id="_StageId-a0a0a74.281ac042.0.150a5873aad.N7912" name="StageVarDispose" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con2="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con5="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config">
+                <con:context/>
+                <con:actions>
+                    <con3:delete varName="bodyReq">
+                        <con1:id>_ActionId-a0a0a74.281ac042.0.150a5873aad.N7911</con1:id>
+                    </con3:delete>
+                    <con3:delete varName="transactionID">
+                        <con1:id>_ActionId-a0a0a74.281ac042.0.150a5873aad.N7910</con1:id>
+                    </con3:delete>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="error" name="error-a0a0a74.281ac042.0.150a5873aad.N77d1">
+            <con:stage id="_StageId-a0a0a74.281ac042.0.150a5873aad.N77d0" name="ReplyError">
+                <con:context/>
+                <con:actions>
+                    <con1:reply isError="true">
+                        <con1:id>_ActionId-a0a0a74.281ac042.0.150a5873aad.N77cc</con1:id>
+                    </con1:reply>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:flow>
+            <con:pipeline-node name="INT_PipelinePairVarSetup" xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config">
+                <con:request>request-a0a0a74.281ac042.0.150a5873aad.N7917</con:request>
+                <con:response>response-a0a0a74.281ac042.0.150a5873aad.N7913</con:response>
+            </con:pipeline-node>
+            <con:route-node name="INT_NotifyRechtoSOS_Route">
+                <con:context/>
+                <con:actions>
+                    <con2:route>
+                        <con1:id>_ActionId-a0a0a74.281ac042.0.150a5873aad.N7802</con1:id>
+                        <con2:service ref="BalanceManagement/BusinesServices/INT_NotifyRechtoSOS_BS" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                        <con2:operation>NotifyRechtoSOS</con2:operation>
+                        <con2:outboundTransform/>
+                        <con2:responseTransform/>
+                    </con2:route>
+                </con:actions>
+            </con:route-node>
+        </con:flow>
+    </con:router>
+</con:pipelineEntry>

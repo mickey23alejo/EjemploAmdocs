@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ser:proxyServiceEntry xmlns:ser="http://www.bea.com/wli/sb/services" xmlns:con="http://www.bea.com/wli/sb/services/security/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oper="http://xmlns.oracle.com/servicebus/proxy/operations" xmlns:tran="http://www.bea.com/wli/sb/transports" xmlns:env="http://www.bea.com/wli/config/env">
+    <ser:coreEntry isAutoPublish="false">
+        <ser:security>
+            <con:inboundWss processWssHeader="true"/>
+        </ser:security>
+        <ser:binding type="SOAP" xsi:type="con:SoapBindingType" isSoap12="false" xmlns:con="http://www.bea.com/wli/sb/services/bindings/config">
+            <con:wsdl ref="TelefonicaDCO/WSDL/dco2msclSoapService (1)"/>
+            <con:port>
+                <con:name>dco2msclPort</con:name>
+                <con:namespace>http://ws.tiaxa.net/dco2msclSoapService/</con:namespace>
+            </con:port>
+            <con:selector type="SOAP body"/>
+        </ser:binding>
+        <oper:operations enabled="true" xmlns:cus="http://www.bea.com/wli/config/customizations" xmlns:xt="http://www.bea.com/wli/config/xmltypes">
+            <oper:messageTracing enabled="true">
+                <oper1:detailsLevel xmlns:oper1="http://xmlns.oracle.com/servicebus/operations">terse</oper1:detailsLevel>
+                <oper1:maxSize xmlns:oper1="http://xmlns.oracle.com/servicebus/operations">8192</oper1:maxSize>
+            </oper:messageTracing>
+        </oper:operations>
+        <ser:ws-policy>
+            <ser:binding-mode>no-policies</ser:binding-mode>
+        </ser:ws-policy>
+        <ser:invoke ref="BalanceManagement/ProxyServices/PX_Pragma/INT_NotifyRechtoDCO_Pipeline" xsi:type="con1:PipelineRef" xmlns:con1="http://www.bea.com/wli/sb/pipeline/config"/>
+        <ser:xqConfiguration>
+            <ser:snippetVersion>1.0</ser:snippetVersion>
+        </ser:xqConfiguration>
+    </ser:coreEntry>
+    <ser:endpointConfig>
+        <tran:provider-id>http</tran:provider-id>
+        <tran:inbound>true</tran:inbound>
+        <tran:URI>
+            <env:value>/GLX_CL_BalanceManagement/integration/proxy/INT_NotifyRechtoDCO_PS</env:value>
+        </tran:URI>
+        <tran:inbound-properties/>
+        <tran:provider-specific xsi:type="http:HttpEndPointConfiguration" xmlns:http="http://www.bea.com/wli/sb/transports/http">
+            <http:inbound-properties/>
+        </tran:provider-specific>
+    </ser:endpointConfig>
+</ser:proxyServiceEntry>

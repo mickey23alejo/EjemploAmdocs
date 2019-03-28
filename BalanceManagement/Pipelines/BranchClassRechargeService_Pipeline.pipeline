@@ -1,0 +1,994 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:pipelineEntry xmlns:con="http://www.bea.com/wli/sb/pipeline/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:con1="http://www.bea.com/wli/sb/stages/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config">
+    <con:coreEntry>
+        <con:binding type="SOAP" isSoap12="false" xsi:type="con:SoapBindingType">
+            <con:wsdl ref="BalanceManagement/WSDL/BalanceManagementLocalCl_v001"/>
+            <con:binding>
+                <con:name>balanceManagementBinding</con:name>
+                <con:namespace>http://telefonica.cl/ChargeCalculationAndBalanceManagement/BalanceManagement/V1</con:namespace>
+            </con:binding>
+        </con:binding>
+        <oper:operations xmlns:oper="http://xmlns.oracle.com/servicebus/pipeline/operations" xmlns:cus="http://www.bea.com/wli/config/customizations" xmlns:xt="http://www.bea.com/wli/config/xmltypes">
+            <oper:tracingEnabled>true</oper:tracingEnabled>
+        </oper:operations>
+        <con:xqConfiguration>
+            <con:snippetVersion>1.0</con:snippetVersion>
+        </con:xqConfiguration>
+    </con:coreEntry>
+    <con:router errorHandler="error-a0a0a74.N7dcde1d4.0.150b3e09cb6.N78e8">
+        <con:pipeline type="error" name="error-N53efdcf2.N1030e984.0.15162fa09db.N766a">
+            <con:stage id="_StageId-N53efdcf2.N1030e984.0.15162fa09db.N7669" name="Stage1">
+                <con:context/>
+                <con:actions>
+                    <con1:reply isError="true">
+                        <con1:id>_ActionId-N53efdcf2.N1030e984.0.15162fa09db.N7666</con1:id>
+                    </con1:reply>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="error" name="error-a0a0a74.N7dcde1d4.0.150b3e09cb6.N78e8">
+            <con:stage name="ErrorMapping" id="_StageId-a00020f.N20ac7bc4.4.15513769342.N7239" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con2="http://www.bea.com/wli/sb/stages/routing/config">
+                <con:context xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                    <con1:userNsDecl prefix="con1" namespace="http://www.bea.com/wli/sb/stages/transform/config"/>
+                    <con1:varNsDecl prefix="v1" namespace="http://telefonica.cl/TefResponseHeader/V1"/>
+                    <con1:varNsDecl prefix="typ" namespace="http://telefonica.cl/ChargeCalculationAndBalanceManagement/BalanceManagement/V1/types"/>
+                </con:context>
+                <con:actions>
+                    <con2:assign varName="errorTrace" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con1:id>_ActionId-a00020f.N20ac7bc4.4.15513769342.N7238</con1:id>
+                        <con2:expr>
+                            <con:xqueryTransform xmlns:con="http://www.bea.com/wli/sb/stages/config">
+                                <con:resource ref="AmdocsCommon/XQueries/CreateErrorTrace"/>
+                                <con:param name="esbcontext">
+                                    <con:path>$esbContext</con:path>
+                                </con:param>
+                                <con:param name="osbfault">
+                                    <con:path>if(fn:exists($innerFault)) then $innerFault else $fault</con:path>
+                                </con:param>
+                                <con:param name="soapbody">
+                                    <con:path>$body</con:path>
+                                </con:param>
+                            </con:xqueryTransform>
+                        </con2:expr>
+                    </con2:assign>
+                    <con1:assign varName="serviceFault" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config">
+                        <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.N20ac7bc4.4.15513769342.N7237</con5:id>
+                        <con1:expr>
+                            <con5:xqueryTransform xmlns:con5="http://www.bea.com/wli/sb/stages/config">
+                                <con5:resource ref="BalanceManagement/XQueries/RechargeService/RechargeServiceToFault"/>
+                                <con5:param name="errorTrace">
+                                    <con5:path>$errorTrace</con5:path>
+                                </con5:param>
+                            </con5:xqueryTransform>
+                        </con1:expr>
+                    </con1:assign>
+                    <con2:replace varName="body" contents-only="true" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con1:id>_ActionId-a00020f.N20ac7bc4.4.15513769342.N7236</con1:id>
+                        <con2:expr>
+                            <con1:xqueryTransform>
+                                <con1:resource ref="AmdocsCommon/XQueries/SoapFault"/>
+                                <con1:param name="esbMessageId">
+                                    <con1:path>$esbMessageID</con1:path>
+                                </con1:param>
+                                <con1:param name="osbfault">
+                                    <con1:path>if(fn:exists($innerFault)) then $innerFault else $fault</con1:path>
+                                </con1:param>
+                                <con1:param name="osbinbound">
+                                    <con1:path>$inbound</con1:path>
+                                </con1:param>
+                                <con1:param name="osboutbound">
+                                    <con1:path>$outbound</con1:path>
+                                </con1:param>
+                                <con1:param name="soapbody">
+                                    <con1:path>$body</con1:path>
+                                </con1:param>
+                            </con1:xqueryTransform>
+                        </con2:expr>
+                    </con2:replace>
+                    <con2:replace varName="body" contents-only="true" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con1:id>_ActionId-a00020f.N20ac7bc4.4.15513769342.N7235</con1:id>
+                        <con2:location>
+                            <con1:xpathText>./soap-env:Fault/detail</con1:xpathText>
+                        </con2:location>
+                        <con2:expr>
+                            <con1:xqueryText>$serviceFault</con1:xqueryText>
+                        </con2:expr>
+                    </con2:replace>
+                </con:actions>
+            </con:stage>
+            <con:stage name="LoggingError" id="_StageId-a00020f.N20ac7bc4.4.15513769342.N71bd" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con2="http://www.bea.com/wli/sb/stages/routing/config">
+                <con:context xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                    <con1:userNsDecl prefix="tel" namespace="http://telefonica.com/chile"/>
+                    <con1:userNsDecl prefix="err" namespace="http://telefonica.cl/TefError/V1"/>
+                    <con1:userNsDecl prefix="esb" namespace="http://telefonica.com/chile/esb/context"/>
+                    <con1:varNsDecl prefix="v1" namespace="http://telefonica.cl/TefResponseHeader/V1"/>
+                    <con1:varNsDecl prefix="typ" namespace="http://telefonica.cl/ChargeCalculationAndBalanceManagement/BalanceManagement/V1/types"/>
+                </con:context>
+                <con:actions>
+                    <con2:ifThenElse xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con1:id>_ActionId-a00020f.N20ac7bc4.4.15513769342.N71bc</con1:id>
+                        <con2:case id="_BranchId-a00020f.N20ac7bc4.4.15513769342.N71bb">
+                            <con2:condition>
+                                <con1:xqueryText>not($traceLevel = "NONE")</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:assign varName="errorTraceMessage">
+                                    <con1:id>_ActionId-a00020f.N20ac7bc4.4.15513769342.N71ba</con1:id>
+                                    <con2:expr>
+                                        <con:xqueryTransform xmlns:con="http://www.bea.com/wli/sb/stages/config">
+                                            <con:resource ref="AmdocsCommon/XQueries/CreateErrorTraceMessage"/>
+                                            <con:param name="parentId">
+                                                <con:path>$esbMessageID</con:path>
+                                            </con:param>
+                                            <con:param name="traceInfo">
+                                                <con:path>$errorTrace/err:code</con:path>
+                                            </con:param>
+                                            <con:param name="application">
+                                                <con:path>""</con:path>
+                                            </con:param>
+                                            <con:param name="environment">
+                                                <con:path>""</con:path>
+                                            </con:param>
+                                            <con:param name="transactionId">
+                                                <con:path>$esbMessageID</con:path>
+                                            </con:param>
+                                            <con:param name="esbcontext">
+                                                <con:path>$esbContext</con:path>
+                                            </con:param>
+                                            <con:param name="catalogId">
+                                                <con:path>3</con:path>
+                                            </con:param>
+                                            <con:param name="osbfault">
+                                                <con:path>if(fn:exists($innerFault)) then $innerFault else $fault</con:path>
+                                            </con:param>
+                                            <con:param name="payload">
+                                                <con:path>fn-bea:serialize($body/*[1])</con:path>
+                                            </con:param>
+                                            <con:param name="referenceId">
+                                                <con:path>""</con:path>
+                                            </con:param>
+                                        </con:xqueryTransform>
+                                    </con2:expr>
+                                </con2:assign>
+                                <con4:route>
+                                    <con1:id>_ActionId-a00020f.N20ac7bc4.4.15513769342.N71b9</con1:id>
+                                    <con4:service ref="AmdocsCommon/BusinessServices/EsbTraceBS" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                                    <con4:outboundTransform>
+                                        <con2:replace varName="body" contents-only="true">
+                                            <con1:id>_ActionId-a00020f.N20ac7bc4.4.15513769342.N71b8</con1:id>
+                                            <con2:expr>
+                                                <con1:xqueryText>$errorTraceMessage</con1:xqueryText>
+                                            </con2:expr>
+                                        </con2:replace>
+                                    </con4:outboundTransform>
+                                </con4:route>
+                            </con2:actions>
+                        </con2:case>
+                    </con2:ifThenElse>
+                </con:actions>
+            </con:stage>
+            <con:stage id="_StageId-a00020f.N20ac7bc4.4.15513769342.N7154" name="ErrorHandler" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con2="http://www.bea.com/wli/sb/stages/routing/config">
+                <con:context/>
+                <con:actions>
+                    <con1:reply isError="true">
+                        <con1:id>_ActionId-a00020f.N20ac7bc4.4.15513769342.N7153</con1:id>
+                    </con1:reply>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="response" name="response-a0a0a74.Nb0bad13.0.150aa7bea35.N7c14">
+            <con:stage id="_StageId-a0a0a74.Nb0bad13.0.150aa7bea35.N7c12" name="Stage1">
+                <con:context>
+                    <con1:userNsDecl prefix="tel" namespace="http://www.kruger.com.ec/"/>
+                    <con1:varNsDecl prefix="v1" namespace="http://telefonica.cl/TefResponseHeader/V1"/>
+                    <con1:varNsDecl prefix="typ" namespace="http://telefonica.cl/ChargeCalculationAndBalanceManagement/BalanceManagement/V1/types"/>
+                </con:context>
+                <con:actions>
+                    <con2:replace varName="body" contents-only="true">
+                        <con1:id>_ActionId-a0a0a9e.20c5cf5d.0.150c8b6fe17.N7ff5</con1:id>
+                        <con2:expr>
+                            <con1:xqueryTransform>
+                                <con1:resource ref="BalanceManagement/XQueries/RechargeService/xq_rechargeServiceRegularResponse_To_RechargeServiceResponse"/>
+                                <con1:param name="rechargeServiceRegularResponse">
+                                    <con1:path>$body/*[1]</con1:path>
+                                </con1:param>
+                            </con1:xqueryTransform>
+                        </con2:expr>
+                    </con2:replace>
+                    <con1:reply isError="false">
+                        <con1:id>_ActionId-aeaa890.723d326c.e.1531e6ee203.N7ea9</con1:id>
+                    </con1:reply>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="request" name="request-a0a0a74.Nb0bad13.0.150aa7bea35.N7c15">
+            <con:stage id="_StageId-a0a0a9e.4d031e84.0.150c8683894.N7e8f" name="Stage4">
+                <con:context>
+                    <con1:userNsDecl prefix="typ" namespace="http://telefonica.cl/ChargeCalculationAndBalanceManagement/BalanceManagement/V1/types"/>
+                    <con1:userNsDecl prefix="v11" namespace="http://telefonica.cl/TefResponseHeader/V1"/>
+                    <con1:userNsDecl prefix="v1" namespace="http://telefonica.pe/TefRequestHeader/V1"/>
+                    <con1:varNsDecl prefix="typ2" namespace="http://telefonica.cl/ChargeCalculationAndBalanceManagement/BalanceManagement/V1/types"/>
+                </con:context>
+                <con:actions>
+                    <con1:assign varName="esbMessageID" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con5="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con6="http://www.bea.com/wli/sb/typesystem/config" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config">
+                        <con7:id xmlns:con7="http://www.bea.com/wli/sb/stages/config">_ActionId-aeaa890.N10c62645.1f.15550a12456.N7fff</con7:id>
+                        <con1:expr>
+                            <con:xqueryText xmlns:con="http://www.bea.com/wli/sb/stages/config">fn:data($inbound/ctx:transport/ctx:request/tp:headers/tp:user-header[@name='transactionID']/@value)</con:xqueryText>
+                        </con1:expr>
+                    </con1:assign>
+                    <con2:assign varName="BodyRechargeServiceESB">
+                        <con1:id>_ActionId-a0a0a74.N7dcde1d4.0.150b3e09cb6.N76f8</con1:id>
+                        <con2:expr>
+                            <con1:xqueryText>$body</con1:xqueryText>
+                        </con2:expr>
+                    </con2:assign>
+                    <con2:replace varName="body" contents-only="true">
+                        <con1:id>_ActionId-a0a0a74.Nb0bad13.0.150aa7bea35.N7bf2</con1:id>
+                        <con2:expr>
+                            <con1:xqueryTransform>
+                                <con1:resource ref="BalanceManagement/XQueries/RechargeService/xq_RechargeServiceRequest_TO_rechargeServiceRegular"/>
+                                <con1:param name="rechargeServiceRequest">
+                                    <con1:path>$body/typ:RechargeServiceRequest</con1:path>
+                                </con1:param>
+                            </con1:xqueryTransform>
+                        </con2:expr>
+                    </con2:replace>
+                </con:actions>
+            </con:stage>
+            <con:stage name="ServiceConfiguration" id="_StageId-a00020f.N20ac7bc4.4.15513769342.N7931" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config">
+                <con:context xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                    <con1:userNsDecl prefix="tfn" namespace="http://telefonica.cl/TefRequestHeader/V1" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+                    <con1:userNsDecl prefix="tel" namespace="http://telefonica.com/chile" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+                    <con1:userNsDecl prefix="esb" namespace="http://telefonica.com/chile/esb/context" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+                    <con1:varNsDecl prefix="v1" namespace="http://telefonica.cl/TefResponseHeader/V1"/>
+                    <con1:varNsDecl prefix="typ" namespace="http://telefonica.cl/ChargeCalculationAndBalanceManagement/BalanceManagement/V1/types"/>
+                </con:context>
+                <con:actions>
+                    <con2:assign varName="esbContext" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-aeaa890.N10c62645.15.1554c7ad332.N7ffb</con6:id>
+                        <con2:expr>
+                            <con:xqueryTransform xmlns:con="http://www.bea.com/wli/sb/stages/config">
+                                <con:resource ref="AmdocsCommon/XQueries/ObtainServiceInfo"/>
+                                <con:param name="operationName">
+                                    <con:path>"RechargeServiceRequest"</con:path>
+                                </con:param>
+                                <con:param name="internalMessageId">
+                                    <con:path>$esbMessageID</con:path>
+                                </con:param>
+                                <con:param name="servideIdMessage">
+                                    <con:path>if(fn:empty($body/*[1]/tfn:TefHeaderReq/tfn:idMessage/text()))
+then
+$localIdMessage
+else
+$body/*[1]/tfn:TefHeaderReq/tfn:idMessage/text()</con:path>
+                                </con:param>
+                                <con:param name="requestHeader">
+                                    <con:path>if(not(fn:empty($body/*[1]/tfn:TefHeaderReq)))
+then
+$body/*[1]/tfn:TefHeaderReq
+else
+$body/*[1]/*:TefHeaderReq</con:path>
+                                </con:param>
+                                <con:param name="serviceName">
+                                    <con:path>if(fn:empty($body/*[1]/tfn:TefHeaderReq/tfn:serviceName/text()))
+then
+$localServiceName
+else
+$body/*[1]/tfn:TefHeaderReq/tfn:serviceName/text()</con:path>
+                                </con:param>
+                            </con:xqueryTransform>
+                        </con2:expr>
+                    </con2:assign>
+                    <con2:assign varName="traceLevel" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-aeaa890.N10c62645.15.1554c7ad332.N7ffa</con6:id>
+                        <con2:expr>
+                            <con:xqueryText xmlns:con="http://www.bea.com/wli/sb/stages/config">fn:upper-case($esbContext/esb:serviceInformation/esb:serviceInfo/tel:TraceLevel/text())</con:xqueryText>
+                        </con2:expr>
+                    </con2:assign>
+                    <con2:ifThenElse xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-aeaa890.N10c62645.15.1554c7ad332.N7ff9</con6:id>
+                        <con2:case id="_BranchId-a00020f.N20ac7bc4.4.15513769342.N792d">
+                            <con2:condition>
+                                <con1:xqueryText xmlns:con6="http://www.bea.com/wli/sb/stages/config">fn:empty($esbContext/esb:serviceInformation/esb:serviceInfo/tel:ServiceName/text())</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:Error>
+                                    <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-aeaa890.N10c62645.15.1554c7ad332.N7ff8</con6:id>
+                                    <con2:errCode>ESB-001</con2:errCode>
+                                    <con2:message>Service not found</con2:message>
+                                </con2:Error>
+                            </con2:actions>
+                        </con2:case>
+                    </con2:ifThenElse>
+                </con:actions>
+            </con:stage>
+            <con:stage id="_StageId-a0a0a74.Nb0bad13.0.150aa7bea35.N7bf5" name="Stage2">
+                <con:context>
+                    <con1:userNsDecl prefix="v1" namespace="http://telefonica.cl/TefRequestHeader/V1"/>
+                    <con1:userNsDecl prefix="java" namespace="java:amdocs.galaxy.RPL1RechargeServices"/>
+                    <con1:userNsDecl prefix="typ" namespace="http://telefonica.cl/ChargeCalculationAndBalanceManagement/BalanceManagement/V1/types"/>
+                    <con1:userNsDecl prefix="tel" namespace="http://www.kruger.com.ec/"/>
+                    <con1:varNsDecl prefix="v11" namespace="http://telefonica.cl/TefResponseHeader/V1"/>
+                </con:context>
+                <con:actions>
+                    <con2:ifThenElse>
+                        <con1:id>_ActionId-a0a0a9e.4d031e84.0.150c8683894.N7f30</con1:id>
+                        <con2:case id="_BranchId-a0a0a9e.4d031e84.0.150c8683894.N7f2f">
+                            <con2:condition>
+                                <con:xqueryText xmlns:con="http://www.bea.com/wli/sb/stages/config">$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentChannel/typ:referenceId = 'UD'</con:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a9e.4d031e84.0.150c8683894.N7efc</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg0</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_RPL3USSDChannelInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a9e.4d031e84.0.150c8683894.N7eca">
+                            <con2:condition>
+                                <con:xqueryText xmlns:con="http://www.bea.com/wli/sb/stages/config">$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentChannel/typ:referenceId = 'WB'</con:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a9e.4d031e84.0.150c8683894.N7ec7</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg0</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_RPL3WEBChannelInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a9e.4d031e84.0.150c8683894.N7ec5">
+                            <con2:condition>
+                                <con:xqueryText xmlns:con="http://www.bea.com/wli/sb/stages/config">$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentChannel/typ:referenceId = 'MC'</con:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a9e.4d031e84.0.150c8683894.N7eae</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg0</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_RPL9MCSSChannelInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a9e.4d031e84.0.150c8683894.N7ec3">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentChannel/typ:referenceId = 'RC'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a9e.4d031e84.0.150c8683894.N7eab</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg0</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_RPL9RecargaContratoChannelInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a9e.4d031e84.0.150c8683894.N7ec1">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentChannel/typ:referenceId = 'PM'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a9e.4d031e84.0.150c8683894.N7ea8</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg0</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_RPL9PMPChannelInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a9e.4d031e84.0.150c8683894.N7ebf">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentChannel/typ:referenceId = 'RF'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a9e.4d031e84.0.150c8683894.N7ea5</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg0</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_RPL9RecargaFacturaChannelInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a9e.4d031e84.0.150c8683894.N7ebd">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentChannel/typ:referenceId = 'IV'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a9e.4d031e84.0.150c8683894.N7ea2</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg0</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_IVRChannelInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a9e.4d031e84.0.150c8683894.N7ebb">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentChannel/typ:referenceId = 'PC'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a9e.4d031e84.0.150c8683894.N7e9f</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg0</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_RPL9PortalCaptiveChannelInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a9e.4d031e84.0.150c8683894.N7eb9">
+                            <con2:condition>
+                                <con:xqueryText xmlns:con="http://www.bea.com/wli/sb/stages/config">$BodyRechargeServiceESB//typ:referenceId = 'PS'</con:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a9e.4d031e84.0.150c8683894.N7e9c</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg0</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con:xqueryTransform xmlns:con="http://www.bea.com/wli/sb/stages/config">
+                                            <con:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_RPL3POSChannelInfo"/>
+                                            <con:param name="RechargeServiceRequest">
+                                                <con:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con:path>
+                                            </con:param>
+                                        </con:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a9e.4d031e84.0.150c8683894.N7eb7">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentChannel/typ:referenceId = 'CC'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a9e.4d031e84.0.150c8683894.N7e99</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg0</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_RPL9CallCenterChannelInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a9e.4d031e84.0.150c8683894.N7eb5">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentChannel/typ:referenceId = 'PM'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace contents-only="false" varName="body">
+                                    <con1:id>_ActionId-a0a0a9e.4d031e84.0.150c8683894.N7e96</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg0</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_RPL9PortalManagerChannelInf"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a9e.4d031e84.0.150c8683894.N7eb3">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentChannel/typ:referenceId = 'SD'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a9e.4d031e84.0.150c8683894.N7e93</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg0</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_RPL9SDPChannelInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a9e.4d031e84.0.150c8683894.N7eb1">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentChannel/typ:referenceId = 'CR'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a9e.4d031e84.0.150c8683894.N7e90</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg0</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_CRMChannelInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a00020f.13e0cfb4.4.1547ccf3ae2.N7fd4">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentChannel/typ:referenceId = 'PG'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body">
+                                    <con1:id>_ActionId-a00020f.13e0cfb4.4.1547ccf3ae2.N7f0c</con1:id>
+                                    <con2:location>
+                                        <con1:xpathText>.//tel:arg0</con1:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_RPL9PortalManagerChannelInf"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a00020f.13e0cfb4.4.1547ccf3ae2.N7fd2">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentChannel/typ:referenceId = 'ES'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body">
+                                    <con1:id>_ActionId-a00020f.13e0cfb4.4.1547ccf3ae2.N7eda</con1:id>
+                                    <con2:location>
+                                        <con1:xpathText>.//tel:arg0</con1:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_RPL9ESBChannelInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a00020f.13e0cfb4.4.1547ccf3ae2.N7fd0">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentChannel/typ:referenceId = 'OT'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body">
+                                    <con1:id>_ActionId-a00020f.13e0cfb4.4.1547ccf3ae2.N7ea8</con1:id>
+                                    <con2:location>
+                                        <con1:xpathText>.//tel:arg0</con1:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseChannel/xq_request_for_RPL9OutageChannelInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:default>
+                            <con2:Error>
+                                <con1:id>_ActionId-a0a0ab1.N54d1d733.0.15158f7f4f8.N7f8a</con1:id>
+                                <con2:errCode>INVALID_REFERENCEID</con2:errCode>
+                                <con2:message>invalid ReferenceId value. Expected values are UD, WB, MC, RC, PM, RF, IV, PC, PS, CC, PM, SD, CR, PG, ES, OT.</con2:message>
+                            </con2:Error>
+                        </con2:default>
+                    </con2:ifThenElse>
+                </con:actions>
+            </con:stage>
+            <con:stage id="_StageId-a0a0a74.Nb0bad13.0.150aa7bea35.N7c13" name="Stage1">
+                <con:context>
+                    <con1:userNsDecl prefix="typ" namespace="http://telefonica.cl/ChargeCalculationAndBalanceManagement/BalanceManagement/V1/types"/>
+                    <con1:userNsDecl prefix="tel" namespace="http://www.kruger.com.ec/"/>
+                    <con1:varNsDecl prefix="v1" namespace="http://telefonica.cl/TefResponseHeader/V1"/>
+                </con:context>
+                <con:actions>
+                    <con2:ifThenElse>
+                        <con1:id>_ActionId-a0a0a74.Nb0bad13.0.150aa7bea35.N7c08</con1:id>
+                        <con2:case id="_BranchId-a0a0a74.Nb0bad13.0.150aa7bea35.N7c07">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentMethod = 'OTC'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a74.Nb0bad13.0.150aa7bea35.N7bf6</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg1</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseRegularRechargeMethod/xq_request_To_RPL3OTCRechargeMethodInfoClass"/>
+                                            <con1:param name="rechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a74.Nb0bad13.0.150aa7bea35.N7c05">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentMethod = 'CC'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a74.Nb0bad13.0.150aa7bea35.N7bb8</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg1</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseRegularRechargeMethod/xq_request_To_CreditCardRechargeMethodInfo"/>
+                                            <con1:param name="rechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a74.Nb0bad13.0.150aa7bea35.N7c03">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentMethod = 'CA'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a74.N29f90155.0.150afdada86.N7ff2</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg1</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseRegularRechargeMethod/xq_request_To_CashRechargeMethodInfo"/>
+                                            <con1:param name="rechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a74.Nb0bad13.0.150aa7bea35.N7c01">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentMethod = 'CFQ'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a74.N29f90155.0.150afdada86.N7fed</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg1</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseRegularRechargeMethod/xq_request_To_RPL9ChargeForServicesMethodInfo"/>
+                                            <con1:param name="rechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a74.Nb0bad13.0.150aa7bea35.N7bff">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentMethod = 'LR'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a74.N29f90155.0.150afdada86.N7fea</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg1</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseRegularRechargeMethod/xq_request_To_RPL9LoyaltyPointsMethodInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a74.Nb0bad13.0.150aa7bea35.N7bfd">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentMethod = 'PR'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a74.N29f90155.0.150afdada86.N7fe7</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg1</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseRegularRechargeMethod/xq_request_To_RPL9PostpaidControlledRechargeMethodInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a74.Nb0bad13.0.150aa7bea35.N7bfb">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentMethod = 'IN'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a74.N29f90155.0.150afdada86.N7fe4</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg1</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseRegularRechargeMethod/xq_request_To_IncreaseRechargeMethodInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:case id="_BranchId-a0a0a74.Nb0bad13.0.150aa7bea35.N7bf9">
+                            <con2:condition>
+                                <con1:xqueryText>$BodyRechargeServiceESB/typ:RechargeServiceRequest/typ:RechargeServiceRequestData/typ:paymentMethod = 'RD'</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:replace varName="body" contents-only="false">
+                                    <con1:id>_ActionId-a0a0a74.N29f90155.0.150afdada86.N7fe1</con1:id>
+                                    <con2:location>
+                                        <con:xpathText xmlns:con="http://www.bea.com/wli/sb/stages/config">.//tel:arg1</con:xpathText>
+                                    </con2:location>
+                                    <con2:expr>
+                                        <con1:xqueryTransform>
+                                            <con1:resource ref="BalanceManagement/XQueries/RechargeService/BaseRegularRechargeMethod/xq_request_To_ReduceRechargeMethodInfo"/>
+                                            <con1:param name="RechargeServiceRequest">
+                                                <con1:path>$BodyRechargeServiceESB/typ:RechargeServiceRequest</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:replace>
+                            </con2:actions>
+                        </con2:case>
+                        <con2:default>
+                            <con2:Error>
+                                <con1:id>_ActionId-a0a0ab1.N54d1d733.0.15158f7f4f8.N7f87</con1:id>
+                                <con2:errCode>INVALID_paymentMethod</con2:errCode>
+                                <con2:message>invalid paymentMethod value. Expected values are OTC, CC, CA, CFQ, LR, PR, IN, RD.</con2:message>
+                            </con2:Error>
+                        </con2:default>
+                    </con2:ifThenElse>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:flow>
+            <con:pipeline-node name="PipelinePairNode1">
+                <con:request>request-a0a0a74.Nb0bad13.0.150aa7bea35.N7c15</con:request>
+                <con:response>response-a0a0a74.Nb0bad13.0.150aa7bea35.N7c14</con:response>
+            </con:pipeline-node>
+            <con:route-node name="RouteNode1" error-handler="error-N53efdcf2.N1030e984.0.15162fa09db.N766a">
+                <con:context>
+                    <con1:varNsDecl prefix="v1" namespace="http://telefonica.cl/TefResponseHeader/V1"/>
+                    <con1:varNsDecl prefix="typ" namespace="http://telefonica.cl/ChargeCalculationAndBalanceManagement/BalanceManagement/V1/types"/>
+                </con:context>
+                <con:actions>
+                    <con3:route>
+                        <con1:id>_ActionId-a0a0a74.Nb0bad13.0.150aa7bea35.N7bbd</con1:id>
+                        <con3:service ref="AmdocsCkABP/BusinessServices/RPL/RPL1RechargeServicesBS" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                        <con3:operation>rechargeService</con3:operation>
+                        <con3:outboundTransform>
+                            <con5:assign varName="serviceRouteRechargeService" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con5="http://www.bea.com/wli/sb/stages/transform/config">
+                                <con2:id>_ActionId-a00020f.N1f51be0c.4.15526bdd764.N7f07</con2:id>
+                                <con1:expr>
+                                    <con2:xqueryTransform>
+                                        <con2:resource ref="AmdocsCommon/XQueries/GetRoutingInfo"/>
+                                        <con2:param name="routingId">
+                                            <con2:path>'066'</con2:path>
+                                        </con2:param>
+                                        <con2:param name="type">
+                                            <con2:path>'EJB'</con2:path>
+                                        </con2:param>
+                                    </con2:xqueryTransform>
+                                </con1:expr>
+                            </con5:assign>
+                            <con5:routing-options xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con5="http://www.bea.com/wli/sb/stages/transform/config">
+                                <con2:id>_ActionId-a00020f.N1f51be0c.4.15526bdd764.N7f42</con2:id>
+                                <con1:uriExpr>
+                                    <con2:xqueryText>$serviceRouteRechargeService</con2:xqueryText>
+                                </con1:uriExpr>
+                            </con5:routing-options>
+                            <con3:assign varName="rechargeServiceID" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config">
+                                <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.N20ac7bc4.4.15513769342.N73c9</con5:id>
+                                <con2:expr>
+                                    <con3:xqueryText xmlns:con3="http://www.bea.com/wli/sb/stages/config">fn-bea:uuid()</con3:xqueryText>
+                                </con2:expr>
+                            </con3:assign>
+                            <con3:assign varName="rechargeServiceInput" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config">
+                                <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.N20ac7bc4.4.15513769342.N73c8</con5:id>
+                                <con2:expr>
+                                    <con:xqueryTransform xmlns:con="http://www.bea.com/wli/sb/stages/config">
+                                        <con:resource ref="AmdocsCommon/XQueries/CreateTraceMessage"/>
+                                        <con:param name="parentId">
+                                            <con:path>$esbMessageID</con:path>
+                                        </con:param>
+                                        <con:param name="application">
+                                            <con:path>""</con:path>
+                                        </con:param>
+                                        <con:param name="environment">
+                                            <con:path>""</con:path>
+                                        </con:param>
+                                        <con:param name="transactionId">
+                                            <con:path>$rechargeServiceID</con:path>
+                                        </con:param>
+                                        <con:param name="esbcontext">
+                                            <con:path>$esbContext</con:path>
+                                        </con:param>
+                                        <con:param name="catalogId">
+                                            <con:path>113</con:path>
+                                        </con:param>
+                                        <con:param name="layer">
+                                            <con:path>"OrchestationLayer"</con:path>
+                                        </con:param>
+                                        <con:param name="payload">
+                                            <con:path>fn-bea:serialize($body/*[1])</con:path>
+                                        </con:param>
+                                        <con:param name="referenceId">
+                                            <con:path>""</con:path>
+                                        </con:param>
+                                    </con:xqueryTransform>
+                                </con2:expr>
+                            </con3:assign>
+                            <con3:route xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config">
+                                <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.N20ac7bc4.4.15513769342.N73c7</con5:id>
+                                <con3:service ref="AmdocsCommon/BusinessServices/EsbTraceBS" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                                <con3:outboundTransform>
+                                    <con2:replace contents-only="true" varName="body" xmlns:con4="http://www.bea.com/wli/sb/stages/transform/config">
+                                        <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.N20ac7bc4.4.15513769342.N73c6</con5:id>
+                                        <con2:expr>
+                                            <con5:xqueryText xmlns:con5="http://www.bea.com/wli/sb/stages/config">$rechargeServiceInput</con5:xqueryText>
+                                        </con2:expr>
+                                    </con2:replace>
+                                </con3:outboundTransform>
+                            </con3:route>
+                        </con3:outboundTransform>
+                        <con3:responseTransform>
+                            <con3:assign varName="rechargeServiceTraceMessageOutput" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config">
+                                <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.N20ac7bc4.4.15513769342.N72e5</con5:id>
+                                <con2:expr>
+                                    <con:xqueryTransform xmlns:con="http://www.bea.com/wli/sb/stages/config">
+                                        <con:resource ref="AmdocsCommon/XQueries/CreateTraceMessage"/>
+                                        <con:param name="parentId">
+                                            <con:path>$esbMessageID</con:path>
+                                        </con:param>
+                                        <con:param name="application">
+                                            <con:path>""</con:path>
+                                        </con:param>
+                                        <con:param name="environment">
+                                            <con:path>""</con:path>
+                                        </con:param>
+                                        <con:param name="transactionId">
+                                            <con:path>$rechargeServiceID</con:path>
+                                        </con:param>
+                                        <con:param name="esbcontext">
+                                            <con:path>$esbContext</con:path>
+                                        </con:param>
+                                        <con:param name="catalogId">
+                                            <con:path>114</con:path>
+                                        </con:param>
+                                        <con:param name="layer">
+                                            <con:path>"OrchestationLayer"</con:path>
+                                        </con:param>
+                                        <con:param name="payload">
+                                            <con:path>fn-bea:serialize($body/*[1])</con:path>
+                                        </con:param>
+                                        <con:param name="referenceId">
+                                            <con:path>""</con:path>
+                                        </con:param>
+                                    </con:xqueryTransform>
+                                </con2:expr>
+                            </con3:assign>
+                            <con3:route xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config">
+                                <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.N20ac7bc4.4.15513769342.N72e4</con5:id>
+                                <con3:service ref="AmdocsCommon/BusinessServices/EsbTraceBS" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                                <con3:outboundTransform>
+                                    <con2:replace varName="body" contents-only="true" xmlns:con4="http://www.bea.com/wli/sb/stages/transform/config">
+                                        <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.N20ac7bc4.4.15513769342.N72e3</con5:id>
+                                        <con2:expr>
+                                            <con5:xqueryText xmlns:con5="http://www.bea.com/wli/sb/stages/config">$rechargeServiceTraceMessageOutput</con5:xqueryText>
+                                        </con2:expr>
+                                    </con2:replace>
+                                </con3:outboundTransform>
+                            </con3:route>
+                        </con3:responseTransform>
+                    </con3:route>
+                </con:actions>
+            </con:route-node>
+        </con:flow>
+    </con:router>
+</con:pipelineEntry>

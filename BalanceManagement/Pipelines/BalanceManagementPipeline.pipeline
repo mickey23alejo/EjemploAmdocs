@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:pipelineEntry xmlns:con="http://www.bea.com/wli/sb/pipeline/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config">
+    <con:coreEntry>
+        <con:binding type="SOAP" isSoap12="false" xsi:type="con:SoapBindingType">
+            <con:wsdl ref="BalanceManagement/WSDL/BalanceManagementLocalCl_v001"/>
+            <con:binding>
+                <con:name>balanceManagementBinding</con:name>
+                <con:namespace>http://telefonica.cl/ChargeCalculationAndBalanceManagement/BalanceManagement/V1</con:namespace>
+            </con:binding>
+        </con:binding>
+        <con:xqConfiguration>
+            <con:snippetVersion>1.0</con:snippetVersion>
+        </con:xqConfiguration>
+    </con:coreEntry>
+    <con:router errorHandler="error-a00020f.N22554b09.4.153e6ad9a03.N7ced">
+        <con:pipeline type="error" name="error-a00020f.N22554b09.4.153e6ad9a03.N7ced">
+            <con:stage id="_StageId-a00020f.N22554b09.4.153e6ad9a03.N7b35" name="Identifiers">
+                <con:context/>
+                <con:actions>
+                    <con3:assign varName="esbMessageID" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con2:id>_ActionId-a00020f.N22554b09.4.153e6ad9a03.N7b34</con2:id>
+                        <con3:expr>
+                            <con2:xqueryText>fn-bea:uuid()</con2:xqueryText>
+                        </con3:expr>
+                    </con3:assign>
+                </con:actions>
+            </con:stage>
+            <con:stage id="_StageId-a00020f.N22554b09.4.153e6ad9a03.N7bd1" name="HandleError" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                <con:context/>
+                <con:actions>
+                    <con3:ifThenElse>
+                        <con2:id>_ActionId-a00020f.N22554b09.4.153e6ad9a03.N7bd0</con2:id>
+                        <con3:case id="_BranchId-a00020f.N22554b09.4.153e6ad9a03.N7bcf">
+                            <con3:condition>
+                                <con2:xqueryText>fn:empty($body/soap-env:Fault)</con2:xqueryText>
+                            </con3:condition>
+                            <con3:actions>
+                                <con3:replace varName="body" contents-only="true">
+                                    <con2:id>_ActionId-a00020f.N22554b09.4.153e6ad9a03.N7bce</con2:id>
+                                    <con3:expr>
+                                        <con2:xqueryTransform>
+                                            <con2:resource ref="AmdocsCommon/XQueries/SoapFault"/>
+                                            <con2:param name="esbMessageId">
+                                                <con2:path>"-1"</con2:path>
+                                            </con2:param>
+                                            <con2:param name="osbfault">
+                                                <con2:path>if(fn:exists($innerFault)) then $innerFault else $fault</con2:path>
+                                            </con2:param>
+                                            <con2:param name="osbinbound">
+                                                <con2:path>$inbound</con2:path>
+                                            </con2:param>
+                                            <con2:param name="osboutbound">
+                                                <con2:path>$outbound</con2:path>
+                                            </con2:param>
+                                            <con2:param name="soapbody">
+                                                <con2:path>$body</con2:path>
+                                            </con2:param>
+                                        </con2:xqueryTransform>
+                                    </con3:expr>
+                                </con3:replace>
+                                <con3:assign varName="errorTraceMessage">
+                                    <con2:id>_ActionId-a00020f.N22554b09.4.153e6ad9a03.N7bcd</con2:id>
+                                    <con3:expr>
+                                        <con2:xqueryTransform>
+                                            <con2:resource ref="AmdocsCommon/XQueries/CreateErrorTraceMessageGeneric"/>
+                                            <con2:param name="parentId">
+                                                <con2:path>$esbMessageID</con2:path>
+                                            </con2:param>
+                                            <con2:param name="application">
+                                                <con2:path>""</con2:path>
+                                            </con2:param>
+                                            <con2:param name="transactionId">
+                                                <con2:path>$esbMessageID</con2:path>
+                                            </con2:param>
+                                            <con2:param name="environment">
+                                                <con2:path>""</con2:path>
+                                            </con2:param>
+                                            <con2:param name="osbfault">
+                                                <con2:path>if(fn:exists($innerFault)) then $innerFault else $fault</con2:path>
+                                            </con2:param>
+                                            <con2:param name="catalogId">
+                                                <con2:path>3</con2:path>
+                                            </con2:param>
+                                            <con2:param name="payload">
+                                                <con2:path>fn-bea:serialize($body/*[1])</con2:path>
+                                            </con2:param>
+                                            <con2:param name="referenceId">
+                                                <con2:path>""</con2:path>
+                                            </con2:param>
+                                            <con2:param name="operationCode">
+                                                <con2:path>""</con2:path>
+                                            </con2:param>
+                                            <con2:param name="serviceName">
+                                                <con2:path>""</con2:path>
+                                            </con2:param>
+                                        </con2:xqueryTransform>
+                                    </con3:expr>
+                                </con3:assign>
+                                <con4:route>
+                                    <con2:id>_ActionId-a00020f.N22554b09.4.153e6ad9a03.N7bcc</con2:id>
+                                    <con4:service ref="AmdocsCommon/BusinessServices/EsbTraceBS" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                                    <con4:outboundTransform>
+                                        <con3:replace varName="body" contents-only="true">
+                                            <con2:id>_ActionId-a00020f.N22554b09.4.153e6ad9a03.N7bcb</con2:id>
+                                            <con3:expr>
+                                                <con2:xqueryText>$errorTraceMessage</con2:xqueryText>
+                                            </con3:expr>
+                                        </con3:replace>
+                                    </con4:outboundTransform>
+                                </con4:route>
+                                <con2:reply isError="true">
+                                    <con2:id>_ActionId-a00020f.N22554b09.4.153e6ad9a03.N7bca</con2:id>
+                                </con2:reply>
+                            </con3:actions>
+                        </con3:case>
+                        <con3:default>
+                            <con2:reply isError="true">
+                                <con2:id>_ActionId-a00020f.N22554b09.4.153e6ad9a03.N7bc9</con2:id>
+                            </con2:reply>
+                        </con3:default>
+                    </con3:ifThenElse>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:flow>
+            <con:branch-node type="operation" id="_FlowId-a0a781c.634d87e9.0.15231219251.N7e5d" name="BranchNodeBalanceManagement">
+                <con:context/>
+                <con:branch-table>
+                    <con:branch name="rechargeService">
+                        <con:operator>equals</con:operator>
+                        <con:value/>
+                        <con:flow>
+                            <con:route-node name="RouteToRechargeService">
+                                <con:context/>
+                                <con:actions>
+                                    <con1:route>
+                                        <con2:id>_ActionId-a0a781c.634d87e9.0.15231219251.N7dfb</con2:id>
+                                        <con1:service ref="BalanceManagement/Pipelines/RechargeServicePipeline" xsi:type="con:PipelineRef"/>
+                                        <con1:operation>rechargeService</con1:operation>
+                                        <con1:outboundTransform/>
+                                        <con1:responseTransform/>
+                                    </con1:route>
+                                </con:actions>
+                            </con:route-node>
+                        </con:flow>
+                    </con:branch>
+                    <con:branch name="viewRecharges">
+                        <con:operator>equals</con:operator>
+                        <con:value/>
+                        <con:flow>
+                            <con:route-node name="RouteToViewRecharges">
+                                <con:context/>
+                                <con:actions>
+                                    <con1:route>
+                                        <con2:id>_ActionId-a00020f.46148435.4.15352fd3d3c.N7ffa</con2:id>
+                                        <con1:service ref="BalanceManagement/Pipelines/ViewRechargesPipeline" xsi:type="con:PipelineRef"/>
+                                        <con1:operation>viewRecharges</con1:operation>
+                                        <con1:outboundTransform/>
+                                        <con1:responseTransform/>
+                                    </con1:route>
+                                </con:actions>
+                            </con:route-node>
+                        </con:flow>
+                    </con:branch>
+                    <con:branch name="retrieveSubscriptionBalance">
+                        <con:operator>equals</con:operator>
+                        <con:value/>
+                        <con:flow>
+                            <con:route-node name="RouteToRetrieveSubscriptionBalance">
+                                <con:context/>
+                                <con:actions>
+                                    <con1:route>
+                                        <con2:id>_ActionId-a00020f.N22554b09.4.153e6ad9a03.N7d53</con2:id>
+                                        <con1:service ref="BalanceManagement/Pipelines/RetrieveSubscriptionBalancePipeline" xsi:type="con:PipelineRef"/>
+                                        <con1:operation>retrieveSubscriptionBalance</con1:operation>
+                                        <con1:outboundTransform/>
+                                        <con1:responseTransform/>
+                                    </con1:route>
+                                </con:actions>
+                            </con:route-node>
+                        </con:flow>
+                    </con:branch>
+                    <con:branch name="getAccountBalance">
+                        <con:operator>equals</con:operator>
+                        <con:value/>
+                        <con:flow>
+                            <con:route-node name="RouteToGetAccountBalance">
+                                <con:context/>
+                                <con:actions>
+                                    <con1:route>
+                                        <con2:id>_ActionId-a00020f.N22554b09.4.153e6ad9a03.N7d4f</con2:id>
+                                        <con1:service ref="BalanceManagement/Pipelines/GetAccountBalancePipeline" xsi:type="con:PipelineRef"/>
+                                        <con1:operation>getAccountBalance</con1:operation>
+                                        <con1:outboundTransform/>
+                                        <con1:responseTransform/>
+                                    </con1:route>
+                                </con:actions>
+                            </con:route-node>
+                        </con:flow>
+                    </con:branch>
+                    <con:branch name="rechargeAgainstBill">
+                        <con:operator>equals</con:operator>
+                        <con:value/>
+                        <con:flow>
+                            <con:route-node name="RouteToRechargeAgainsBill">
+                                <con:context/>
+                                <con:actions>
+                                    <con1:route>
+                                        <con2:id>_ActionId-a00020f.N47507d4e.0.1559592236b.N78b3</con2:id>
+                                        <con1:service ref="BalanceManagement/Pipelines/RechargeAgainstBillPipeline" xsi:type="con:PipelineRef"/>
+                                        <con1:outboundTransform/>
+                                        <con1:responseTransform/>
+                                    </con1:route>
+                                </con:actions>
+                            </con:route-node>
+                        </con:flow>
+                    </con:branch>
+                    <con:default-branch>
+                        <con:flow/>
+                    </con:default-branch>
+                </con:branch-table>
+            </con:branch-node>
+        </con:flow>
+    </con:router>
+</con:pipelineEntry>
