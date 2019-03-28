@@ -1,0 +1,156 @@
+<definitions name="Address" targetNamespace="http://telefonica.cl/LocationManagement/Address/V1"
+             xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://telefonica.cl/LocationManagement/Address/V1"
+             xmlns:ns="http://telefonica.cl/LocationManagement/Address/V1/types"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <types>
+    <xsd:schema targetNamespace="http://telefonica.cl/LocationManagement/Address/V1">
+      <xsd:import namespace="http://telefonica.cl/LocationManagement/Address/V1/types"
+                  schemaLocation="../XSD/AddressGatewayServiceLocal_v001.xsd"/>
+    </xsd:schema>
+    <xsd:schema>
+      <xsd:import namespace="http://telefonica.cl/LocationManagement/Address/V1/types"
+                  schemaLocation="../XSD/AddressGatewayServiceLocal_v001.xsd"></xsd:import>
+    </xsd:schema>
+  </types>
+  <wsdl:message name="requestEmailValidationRequest">
+    <wsdl:part name="requestEmailValidationRequest" element="ns:RequestEmailValidationRequest"/>
+  </wsdl:message>
+  <wsdl:message name="requestEmailValidationResponse">
+    <wsdl:part name="requestEmailValidationResponse" element="ns:RequestEmailValidationResponse"/>
+  </wsdl:message>
+  <wsdl:message name="requestEmailValidationFault">
+    <wsdl:part name="requestEmailValidationFault" element="ns:RequestEmailValidationFault"/>
+  </wsdl:message>
+  <wsdl:message name="updateEmailValidationStatusRequest">
+    <wsdl:part name="updateEmailValidationStatusRequest" element="ns:UpdateEmailValidationStatusRequest"/>
+  </wsdl:message>
+  <wsdl:message name="updateEmailValidationStatusResponse">
+    <wsdl:part name="updateEmailValidationStatusResponse" element="ns:UpdateEmailValidationStatusResponse"/>
+  </wsdl:message>
+  <wsdl:message name="updateEmailValidationStatusFault">
+    <wsdl:part name="updateEmailValidationStatusFault" element="ns:UpdateEmailValidationStatusFault"/>
+  </wsdl:message>
+  <wsdl:message name="validateAddressRequest">
+    <wsdl:part name="ValidateAddressRequest" element="ns:ValidateAddressRequest"/>
+  </wsdl:message>
+  <wsdl:message name="validateAddressResponse">
+    <wsdl:part name="ValidateAddressResponse" element="ns:ValidateAddressResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="validateAddressFault">
+    <wsdl:part name="ValidateAddressFault" element="ns:ValidateAddressFault"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="retrieveAddressInformationRequest">
+    <wsdl:part name="RetrieveAddressInformationRequest" element="ns:RetrieveAddressInformationRequest"/>
+  </wsdl:message>
+  <wsdl:message name="retrieveAddressInformationResponse">
+    <wsdl:part name="RetrieveAddressInformationResponse" element="ns:RetrieveAddressInformationResponse"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="retrieveAddressInformationFault">
+    <wsdl:part name="RetrieveAddressInformationFault" element="ns:RetrieveAddressInformationFault"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="retrieveDistrictsCommunesRequest">
+    <wsdl:part name="RetrieveDistrictsRequest" element="ns:RetrieveDistrictsRequest"/>
+  </wsdl:message>
+  <wsdl:message name="retrieveDistrictsCommunesResponse">
+    <wsdl:part name="RetrieveDistrictsResponse" element="ns:RetrieveDistrictsResponse"/>
+  </wsdl:message>
+  <wsdl:message name="retrieveDistrictsCommunesFault">
+    <wsdl:part name="RetrieveDistrictsFault" element="ns:RetrieveDistrictsFault"></wsdl:part>
+  </wsdl:message>
+  <portType name="AddressPortType">
+    <wsdl:operation name="validateAddress">
+      <wsdl:input message="tns:validateAddressRequest"/>
+      <wsdl:output message="tns:validateAddressResponse"/>
+      <wsdl:fault name="fault" message="tns:validateAddressFault"/>
+    </wsdl:operation>
+    <wsdl:operation name="retrieveAddressInformation">
+      <wsdl:input message="tns:retrieveAddressInformationRequest"/>
+      <wsdl:output message="tns:retrieveAddressInformationResponse"/>
+      <wsdl:fault name="fault" message="tns:retrieveAddressInformationFault"/>
+    </wsdl:operation>
+    <wsdl:operation name="retrieveDistrictsCommunes">
+      <wsdl:input message="tns:retrieveDistrictsCommunesRequest"/>
+      <wsdl:output message="tns:retrieveDistrictsCommunesResponse"/>
+      <wsdl:fault name="fault" message="tns:retrieveDistrictsCommunesFault"/>
+    </wsdl:operation>
+	<wsdl:operation name="requestEmailValidation">
+      <wsdl:input message="tns:requestEmailValidationRequest"/>
+      <wsdl:output message="tns:requestEmailValidationResponse"/>
+	    <wsdl:fault name="fault" message="tns:requestEmailValidationFault"/>
+    </wsdl:operation>
+    <wsdl:operation name="updateEmailValidationStatus">
+      <wsdl:input message="tns:updateEmailValidationStatusRequest"/>
+      <wsdl:output message="tns:updateEmailValidationStatusResponse"/>
+      <wsdl:fault name="fault" message="tns:updateEmailValidationStatusFault"/>
+    </wsdl:operation>
+  </portType>
+  <binding name="AddressBinding" type="tns:AddressPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="validateAddress">
+      <soap:operation soapAction="http://telefonica.cl/LocationManagement/Address/V1/ValidateChileanAddress"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="fault">
+        <soap:fault use="literal" name="fault"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="retrieveAddressInformation">
+      <soap:operation soapAction="http://telefonica.cl/LocationManagement/Address/V1/RetrieveAddressInformation"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="fault">
+        <soap:fault use="literal" name="fault"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="retrieveDistrictsCommunes">
+      <soap:operation soapAction="http://telefonica.cl/LocationManagement/Address/V1/RetrieveDistrictsCommunes"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="fault">
+        <soap:fault use="literal" name="fault"/>
+      </wsdl:fault>
+    </wsdl:operation>
+	<wsdl:operation name="requestEmailValidation">
+      <soap:operation soapAction="http://telefonica.cl/LocationManagement/Address/V1/RequestEmailValidation"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="fault">
+        <soap:fault use="literal" name="fault"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <operation name="updateEmailValidationStatus">
+      <soap:operation soapAction="http://telefonica.cl/LocationManagement/Address/V1/UpdateEmailValidationStatus"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="fault">
+        <soap:fault use="literal" name="fault"/>
+      </fault>
+    </operation>
+  </binding>
+  <service name="AddressService">
+    <port name="AddressPort" binding="tns:AddressBinding">
+      <soap:address location="http://localhost:7001/LocationManagement/Address/V1"/>
+    </port>
+  </service>
+</definitions>

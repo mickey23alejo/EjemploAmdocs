@@ -1,0 +1,807 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:pipelineEntry xmlns:con="http://www.bea.com/wli/sb/pipeline/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con5="http://www.bea.com/wli/sb/stages/publish/config">
+    <con:coreEntry>
+        <con:binding type="SOAP" isSoap12="false" xsi:type="con:SoapBindingType">
+            <con:wsdl ref="Address/WSDL/AddressGatewayServiceLocal_v001"/>
+            <con:binding>
+                <con:name>AddressBinding</con:name>
+                <con:namespace>http://telefonica.cl/LocationManagement/Address/V1</con:namespace>
+            </con:binding>
+        </con:binding>
+        <con:xqConfiguration>
+            <con:snippetVersion>1.0</con:snippetVersion>
+        </con:xqConfiguration>
+    </con:coreEntry>
+    <con:router errorHandler="error-N3f57fe05.6970dcc7.0.14eff10279c.N7965">
+        <con:pipeline type="error" name="error-N3f57fe05.6970dcc7.0.14eff10279c.N7965">
+            <con:stage name="ErrorMapping" id="_StageId-a00020f.N12264ec2.4.15528f337ba.N7cd9" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con2="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config">
+                <con:context xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                    <con1:userNsDecl prefix="con1" namespace="http://www.bea.com/wli/sb/stages/transform/config"/>
+                    <con1:varNsDecl prefix="v1" namespace="http://telefonica.cl/TefResponseHeader/V1"/>
+                    <con1:varNsDecl prefix="typ" namespace="http://telefonica.cl/ChargeCalculationAndBalanceManagement/BalanceManagement/V1/types"/>
+                </con:context>
+                <con:actions>
+                    <con2:assign varName="errorTrace" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con1:id>_ActionId-a00020f.N12264ec2.4.15528f337ba.N7cd8</con1:id>
+                        <con2:expr>
+                            <con:xqueryTransform xmlns:con="http://www.bea.com/wli/sb/stages/config">
+                                <con:resource ref="AmdocsCommon/XQueries/CreateErrorTrace"/>
+                                <con:param name="esbcontext">
+                                    <con:path>$esbContext</con:path>
+                                </con:param>
+                                <con:param name="osbfault">
+                                    <con:path>if(fn:exists($innerFault)) then $innerFault else $fault</con:path>
+                                </con:param>
+                                <con:param name="soapbody">
+                                    <con:path>$body</con:path>
+                                </con:param>
+                            </con:xqueryTransform>
+                        </con2:expr>
+                    </con2:assign>
+                    <con1:assign varName="serviceFault" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config">
+                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.N12264ec2.4.15528f337ba.N7cd7</con6:id>
+                        <con1:expr>
+                            <con6:xqueryTransform xmlns:con6="http://www.bea.com/wli/sb/stages/config">
+                                <con6:resource ref="Address/XQueries/validateChileanAddress/validateAddressFault"/>
+                                <con6:param name="errorTrace">
+                                    <con6:path>$errorTrace</con6:path>
+                                </con6:param>
+                            </con6:xqueryTransform>
+                        </con1:expr>
+                    </con1:assign>
+                    <con2:replace varName="body" contents-only="true" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con1:id>_ActionId-a00020f.N12264ec2.4.15528f337ba.N7cd6</con1:id>
+                        <con2:expr>
+                            <con1:xqueryTransform>
+                                <con1:resource ref="AmdocsCommon/XQueries/SoapFault"/>
+                                <con1:param name="esbMessageId">
+                                    <con1:path>$esbMessageID</con1:path>
+                                </con1:param>
+                                <con1:param name="osbfault">
+                                    <con1:path>if(fn:exists($innerFault)) then $innerFault else $fault</con1:path>
+                                </con1:param>
+                                <con1:param name="osbinbound">
+                                    <con1:path>$inbound</con1:path>
+                                </con1:param>
+                                <con1:param name="osboutbound">
+                                    <con1:path>$outbound</con1:path>
+                                </con1:param>
+                                <con1:param name="soapbody">
+                                    <con1:path>$body</con1:path>
+                                </con1:param>
+                            </con1:xqueryTransform>
+                        </con2:expr>
+                    </con2:replace>
+                    <con2:replace varName="body" contents-only="true" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con1:id>_ActionId-a00020f.N12264ec2.4.15528f337ba.N7cd5</con1:id>
+                        <con2:location>
+                            <con1:xpathText>./soap-env:Fault/detail</con1:xpathText>
+                        </con2:location>
+                        <con2:expr>
+                            <con1:xqueryText>$serviceFault</con1:xqueryText>
+                        </con2:expr>
+                    </con2:replace>
+                </con:actions>
+            </con:stage>
+            <con:stage name="LoggingError" id="_StageId-a00020f.N12264ec2.4.15528f337ba.N7c2d" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con2="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config">
+                <con:context xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                    <con1:userNsDecl prefix="tel" namespace="http://telefonica.com/chile"/>
+                    <con1:userNsDecl prefix="err" namespace="http://telefonica.cl/TefError/V1"/>
+                    <con1:userNsDecl prefix="esb" namespace="http://telefonica.com/chile/esb/context"/>
+                    <con1:varNsDecl prefix="v1" namespace="http://telefonica.cl/TefResponseHeader/V1"/>
+                    <con1:varNsDecl prefix="typ" namespace="http://telefonica.cl/ChargeCalculationAndBalanceManagement/BalanceManagement/V1/types"/>
+                </con:context>
+                <con:actions>
+                    <con2:ifThenElse xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con1:id>_ActionId-a00020f.N12264ec2.4.15528f337ba.N7c2c</con1:id>
+                        <con2:case id="_BranchId-a00020f.N12264ec2.4.15528f337ba.N7c2b">
+                            <con2:condition>
+                                <con1:xqueryText>not($traceLevel = "NONE")</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:assign varName="errorTraceMessage">
+                                    <con1:id>_ActionId-a00020f.N12264ec2.4.15528f337ba.N7c2a</con1:id>
+                                    <con2:expr>
+                                        <con:xqueryTransform xmlns:con="http://www.bea.com/wli/sb/stages/config">
+                                            <con:resource ref="AmdocsCommon/XQueries/CreateErrorTraceMessage"/>
+                                            <con:param name="parentId">
+                                                <con:path>$esbMessageID</con:path>
+                                            </con:param>
+                                            <con:param name="traceInfo">
+                                                <con:path>$errorTrace/err:code</con:path>
+                                            </con:param>
+                                            <con:param name="application">
+                                                <con:path>""</con:path>
+                                            </con:param>
+                                            <con:param name="environment">
+                                                <con:path>""</con:path>
+                                            </con:param>
+                                            <con:param name="transactionId">
+                                                <con:path>$esbMessageID</con:path>
+                                            </con:param>
+                                            <con:param name="esbcontext">
+                                                <con:path>$esbContext</con:path>
+                                            </con:param>
+                                            <con:param name="catalogId">
+                                                <con:path>3</con:path>
+                                            </con:param>
+                                            <con:param name="osbfault">
+                                                <con:path>if(fn:exists($innerFault)) then $innerFault else $fault</con:path>
+                                            </con:param>
+                                            <con:param name="payload">
+                                                <con:path>fn-bea:serialize($body/*[1])</con:path>
+                                            </con:param>
+                                            <con:param name="referenceId">
+                                                <con:path>""</con:path>
+                                            </con:param>
+                                        </con:xqueryTransform>
+                                    </con2:expr>
+                                </con2:assign>
+                                <con4:route>
+                                    <con1:id>_ActionId-a00020f.N12264ec2.4.15528f337ba.N7c29</con1:id>
+                                    <con4:service ref="AmdocsCommon/BusinessServices/EsbTraceBS" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                                    <con4:outboundTransform>
+                                        <con2:replace varName="body" contents-only="true">
+                                            <con1:id>_ActionId-a00020f.N12264ec2.4.15528f337ba.N7c28</con1:id>
+                                            <con2:expr>
+                                                <con1:xqueryText>$errorTraceMessage</con1:xqueryText>
+                                            </con2:expr>
+                                        </con2:replace>
+                                    </con4:outboundTransform>
+                                </con4:route>
+                            </con2:actions>
+                        </con2:case>
+                    </con2:ifThenElse>
+                </con:actions>
+            </con:stage>
+            <con:stage id="_StageId-a00020f.N12264ec2.4.15528f337ba.N7bc4" name="ErrorHandler" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con2="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config">
+                <con:context/>
+                <con:actions>
+                    <con1:reply isError="true">
+                        <con1:id>_ActionId-a00020f.N12264ec2.4.15528f337ba.N7bc3</con1:id>
+                    </con1:reply>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="request" name="request-N3f57fe05.6970dcc7.0.14eff10279c.N63b0">
+            <con:stage id="_StageId-N3f57fe5f.616d668b.0.14f2881877a.N7f38" name="StageVarSetup">
+                <con:context/>
+                <con:actions>
+                    <con1:assign varName="bodyReq">
+                        <con2:id>_ActionId-N3f57fe5f.616d668b.0.14f2881877a.N7f36</con2:id>
+                        <con1:expr>
+                            <con2:xqueryText>$body</con2:xqueryText>
+                        </con1:expr>
+                    </con1:assign>
+                    <con1:assign varName="esbMessageID">
+                        <con2:id>_ActionId-N53efdcfe.N2ad4e1b9.0.14fb806a1c1.N7b7b</con2:id>
+                        <con1:expr>
+                            <con2:xqueryText>fn-bea:uuid()</con2:xqueryText>
+                        </con1:expr>
+                    </con1:assign>
+                </con:actions>
+            </con:stage>
+            <con:stage name="ServiceConfiguration" id="_StageId-a00020f.29a16d37.4.15527bd9181.N711a" xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config">
+                <con:context xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                    <con1:userNsDecl prefix="tfn" namespace="http://telefonica.cl/TefRequestHeader/V1" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+                    <con1:userNsDecl prefix="tel" namespace="http://telefonica.com/chile" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+                    <con1:userNsDecl prefix="esb" namespace="http://telefonica.com/chile/esb/context" xmlns:con6="http://www.bea.com/wli/sb/stages/config"/>
+                </con:context>
+                <con:actions>
+                    <con2:assign varName="esbContext" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.29a16d37.4.15527bd9181.N7119</con6:id>
+                        <con2:expr>
+                            <con1:xqueryTransform xmlns:con6="http://www.bea.com/wli/sb/stages/config">
+                                <con1:resource ref="AmdocsCommon/XQueries/ObtainServiceInfo"/>
+                                <con1:param name="operationName">
+                                    <con1:path>if(fn:empty($localOperationName)) then
+fn:local-name($body/*[1])
+else
+$localOperationName</con1:path>
+                                </con1:param>
+                                <con1:param name="internalMessageId">
+                                    <con1:path>$esbMessageID</con1:path>
+                                </con1:param>
+                                <con1:param name="requestHeader">
+                                    <con1:path>if(not(fn:empty($body/*[1]/tfn:TefHeaderReq)))
+then
+$body/*[1]/tfn:TefHeaderReq
+else
+$body/*[1]/*:TefHeaderReq</con1:path>
+                                </con1:param>
+                                <con1:param name="servideIdMessage">
+                                    <con1:path>if(fn:empty($body/*[1]/tfn:TefHeaderReq/tfn:idMessage/text()))
+then
+$localIdMessage
+else
+$body/*[1]/tfn:TefHeaderReq/tfn:idMessage/text()</con1:path>
+                                </con1:param>
+                                <con1:param name="serviceName">
+                                    <con1:path>if(fn:empty($body/*[1]/tfn:TefHeaderReq/tfn:serviceName/text()))
+then
+$localServiceName
+else
+$body/*[1]/tfn:TefHeaderReq/tfn:serviceName/text()</con1:path>
+                                </con1:param>
+                            </con1:xqueryTransform>
+                        </con2:expr>
+                    </con2:assign>
+                    <con2:assign varName="traceLevel" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.29a16d37.4.15527bd9181.N7118</con6:id>
+                        <con2:expr>
+                            <con1:xqueryText xmlns:con6="http://www.bea.com/wli/sb/stages/config">fn:upper-case($esbContext/esb:serviceInformation/esb:serviceInfo/tel:TraceLevel/text())</con1:xqueryText>
+                        </con2:expr>
+                    </con2:assign>
+                    <con2:ifThenElse xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.29a16d37.4.15527bd9181.N7117</con6:id>
+                        <con2:case id="_BranchId-a00020f.29a16d37.4.15527bd9181.N7116">
+                            <con2:condition>
+                                <con1:xqueryText xmlns:con6="http://www.bea.com/wli/sb/stages/config">fn:empty($esbContext/esb:serviceInformation/esb:serviceInfo/tel:ServiceName/text())</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:Error>
+                                    <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.29a16d37.4.15527bd9181.N7115</con6:id>
+                                    <con2:errCode>ESB-001</con2:errCode>
+                                    <con2:message>Service not found</con2:message>
+                                </con2:Error>
+                            </con2:actions>
+                        </con2:case>
+                    </con2:ifThenElse>
+                </con:actions>
+            </con:stage>
+            <con:stage name="LoggingInput" id="_StageId-a00020f.29a16d37.4.15527bd9181.N7068" xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config">
+                <con:context xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config"/>
+                <con:actions>
+                    <con2:ifThenElse xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.29a16d37.4.15527bd9181.N7067</con6:id>
+                        <con2:case id="_BranchId-a00020f.29a16d37.4.15527bd9181.N7066">
+                            <con2:condition>
+                                <con1:xqueryText xmlns:con6="http://www.bea.com/wli/sb/stages/config">$traceLevel = "INFO" or $traceLevel = "DEBUG"</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:assign varName="inputTraceMessage">
+                                    <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.29a16d37.4.15527bd9181.N7065</con6:id>
+                                    <con2:expr>
+                                        <con1:xqueryTransform xmlns:con6="http://www.bea.com/wli/sb/stages/config">
+                                            <con1:resource ref="AmdocsCommon/XQueries/CreateTraceMessage"/>
+                                            <con1:param name="parentId">
+                                                <con1:path>$esbMessageID</con1:path>
+                                            </con1:param>
+                                            <con1:param name="application">
+                                                <con1:path>""</con1:path>
+                                            </con1:param>
+                                            <con1:param name="transactionId">
+                                                <con1:path>$esbMessageID</con1:path>
+                                            </con1:param>
+                                            <con1:param name="environment">
+                                                <con1:path>""</con1:path>
+                                            </con1:param>
+                                            <con1:param name="esbcontext">
+                                                <con1:path>$esbContext</con1:path>
+                                            </con1:param>
+                                            <con1:param name="layer">
+                                                <con1:path>'ExpositionLayer'</con1:path>
+                                            </con1:param>
+                                            <con1:param name="catalogId">
+                                                <con1:path>1</con1:path>
+                                            </con1:param>
+                                            <con1:param name="payload">
+                                                <con1:path>fn-bea:serialize($body/*[1])</con1:path>
+                                            </con1:param>
+                                            <con1:param name="referenceId">
+                                                <con1:path>""</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:assign>
+                                <con4:route>
+                                    <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.29a16d37.4.15527bd9181.N7064</con6:id>
+                                    <con4:service ref="AmdocsCommon/BusinessServices/EsbTraceBS" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                                    <con4:outboundTransform>
+                                        <con2:replace contents-only="true" varName="body">
+                                            <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.29a16d37.4.15527bd9181.N7063</con6:id>
+                                            <con2:expr>
+                                                <con1:xqueryText xmlns:con6="http://www.bea.com/wli/sb/stages/config">$inputTraceMessage</con1:xqueryText>
+                                            </con2:expr>
+                                        </con2:replace>
+                                    </con4:outboundTransform>
+                                </con4:route>
+                            </con2:actions>
+                        </con2:case>
+                    </con2:ifThenElse>
+                </con:actions>
+            </con:stage>
+            <con:stage id="_StageId-N3f57fe5f.4376377e.0.14f22b49327.N760a" name="ValidateRequestStage">
+                <con:context>
+                    <con2:userNsDecl prefix="v1" namespace="http://telefonica.cl/TefRequestHeader/V1"/>
+                    <con2:userNsDecl prefix="tel" namespace="http://telefonica.com/chile"/>
+                    <con2:userNsDecl prefix="esb" namespace="http://telefonica.com/chile/esb/context"/>
+                    <con2:userNsDecl prefix="typ" namespace="http://telefonica.cl/LocationManagement/Address/V1/types"/>
+                </con:context>
+                <con:actions>
+                    <con6:ifThenElse xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con6="http://www.bea.com/wli/sb/stages/transform/config">
+                        <con2:id>_ActionId-a00020f.29a16d37.4.15527bd9181.N6fc9</con2:id>
+                        <con3:case id="_BranchId-a00020f.29a16d37.4.15527bd9181.N6fc8">
+                            <con3:condition>
+                                <con7:xqueryText xmlns:con7="http://www.bea.com/wli/sb/stages/config">$esbContext/esb:serviceInformation/esb:serviceInfo/tel:InputValidation = "true"</con7:xqueryText>
+                            </con3:condition>
+                            <con3:actions>
+                                <con1:validate xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config">
+                                    <con2:id>_ActionId-N3f57fe5f.4376377e.0.14f22b49327.N7609</con2:id>
+                                    <con1:schema ref="Address/XSD/AddressGatewayServiceLocal_v001"/>
+                                    <con1:schemaElement xmlns:typ="http://telefonica.cl/LocationManagement/Address/V1/types">typ:ValidateAddressRequest</con1:schemaElement>
+                                    <con1:varName>body</con1:varName>
+                                    <con1:location>
+                                        <con2:xpathText>./typ:ValidateAddressRequest</con2:xpathText>
+                                    </con1:location>
+                                </con1:validate>
+                            </con3:actions>
+                        </con3:case>
+                    </con6:ifThenElse>
+                </con:actions>
+            </con:stage>
+            <con:stage id="_StageId-N3f57fe92.N6a3198ed.0.150056ff4fb.N7ffa" name="ValidateNormalizationCodeStage">
+                <con:context>
+                    <con2:userNsDecl prefix="typ" namespace="http://telefonica.cl/LocationManagement/Address/V1/types"/>
+                </con:context>
+                <con:actions>
+                    <con1:ifThenElse>
+                        <con2:id>_ActionId-N3f57fe92.N6a3198ed.0.150056ff4fb.N7ff9</con2:id>
+                        <con1:case id="_BranchId-N3f57fe92.N6a3198ed.0.150056ff4fb.N7ff8">
+                            <con1:condition>
+                                <con2:xqueryText>fn:data($body/typ:ValidateAddressRequest/typ:ValidateAddressRequest_data/typ:isForShipment) = fn:true() and 
+fn:string-length($body/typ:ValidateAddressRequest/typ:ValidateAddressRequest_data/typ:normalizationCode/text())=0</con2:xqueryText>
+                            </con1:condition>
+                            <con1:actions>
+                                <con1:Error>
+                                    <con2:id>_ActionId-N3f57fe92.N6a3198ed.0.150056ff4fb.N7fc5</con2:id>
+                                    <con1:errCode>change me</con1:errCode>
+                                </con1:Error>
+                            </con1:actions>
+                        </con1:case>
+                    </con1:ifThenElse>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="response" name="response-N3f57fe05.6970dcc7.0.14eff10279c.N639f">
+            <con:stage name="LoggingOutput" id="_StageId-a00020f.29a16d37.4.15527bd9181.N6f4e" xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con1="http://www.bea.com/wli/sb/stages/config">
+                <con:context xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config"/>
+                <con:actions>
+                    <con2:ifThenElse xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con5="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con4="http://www.bea.com/wli/sb/stages/publish/config">
+                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.29a16d37.4.15527bd9181.N6f4d</con6:id>
+                        <con2:case id="_BranchId-a00020f.29a16d37.4.15527bd9181.N6f4c">
+                            <con2:condition>
+                                <con1:xqueryText xmlns:con6="http://www.bea.com/wli/sb/stages/config">$traceLevel = "INFO" or $traceLevel = "DEBUG"</con1:xqueryText>
+                            </con2:condition>
+                            <con2:actions>
+                                <con2:assign varName="outputTraceMessage">
+                                    <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.29a16d37.4.15527bd9181.N6f4b</con6:id>
+                                    <con2:expr>
+                                        <con1:xqueryTransform xmlns:con6="http://www.bea.com/wli/sb/stages/config">
+                                            <con1:resource ref="AmdocsCommon/XQueries/CreateTraceMessage"/>
+                                            <con1:param name="parentId">
+                                                <con1:path>$esbMessageID</con1:path>
+                                            </con1:param>
+                                            <con1:param name="application">
+                                                <con1:path>""</con1:path>
+                                            </con1:param>
+                                            <con1:param name="transactionId">
+                                                <con1:path>$esbMessageID</con1:path>
+                                            </con1:param>
+                                            <con1:param name="environment">
+                                                <con1:path>""</con1:path>
+                                            </con1:param>
+                                            <con1:param name="esbcontext">
+                                                <con1:path>$esbContext</con1:path>
+                                            </con1:param>
+                                            <con1:param name="layer">
+                                                <con1:path>'ExpositionLayer'</con1:path>
+                                            </con1:param>
+                                            <con1:param name="catalogId">
+                                                <con1:path>2</con1:path>
+                                            </con1:param>
+                                            <con1:param name="payload">
+                                                <con1:path>fn-bea:serialize($body/*[1])</con1:path>
+                                            </con1:param>
+                                            <con1:param name="referenceId">
+                                                <con1:path>""</con1:path>
+                                            </con1:param>
+                                        </con1:xqueryTransform>
+                                    </con2:expr>
+                                </con2:assign>
+                                <con4:route>
+                                    <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.29a16d37.4.15527bd9181.N6f4a</con6:id>
+                                    <con4:service ref="AmdocsCommon/BusinessServices/EsbTraceBS" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                                    <con4:outboundTransform>
+                                        <con2:replace varName="body" contents-only="true">
+                                            <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.29a16d37.4.15527bd9181.N6f49</con6:id>
+                                            <con2:expr>
+                                                <con1:xqueryText xmlns:con6="http://www.bea.com/wli/sb/stages/config">$outputTraceMessage</con1:xqueryText>
+                                            </con2:expr>
+                                        </con2:replace>
+                                    </con4:outboundTransform>
+                                </con4:route>
+                            </con2:actions>
+                        </con2:case>
+                    </con2:ifThenElse>
+                </con:actions>
+            </con:stage>
+            <con:stage id="_StageId-N3f57c7ff.N4d3607bc.0.14fae3b7be7.N75eb" name="StageValidateResponse">
+                <con:context>
+                    <con2:userNsDecl prefix="tel" namespace="http://telefonica.com/chile"/>
+                    <con2:userNsDecl prefix="esb" namespace="http://telefonica.com/chile/esb/context"/>
+                    <con2:userNsDecl prefix="typ" namespace="http://telefonica.cl/LocationManagement/Address/V1/types"/>
+                </con:context>
+                <con:actions>
+                    <con6:ifThenElse xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con6="http://www.bea.com/wli/sb/stages/transform/config">
+                        <con2:id>_ActionId-a00020f.29a16d37.4.15527bd9181.N6eaf</con2:id>
+                        <con3:case id="_BranchId-a00020f.29a16d37.4.15527bd9181.N6eae">
+                            <con3:condition>
+                                <con:xqueryText xmlns:con="http://www.bea.com/wli/sb/stages/config">$esbContext/esb:serviceInformation/esb:serviceInfo/tel:OutputValidation = "true"</con:xqueryText>
+                            </con3:condition>
+                            <con3:actions>
+                                <con1:validate xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config">
+                                    <con2:id>_ActionId-N3f57fe5f.4376377e.0.14f22b49327.N7605</con2:id>
+                                    <con1:schema ref="Address/XSD/AddressGatewayServiceLocal_v001"/>
+                                    <con1:schemaElement xmlns:typ="http://telefonica.cl/LocationManagement/Address/V1/types">typ:ValidateAddressResponse</con1:schemaElement>
+                                    <con1:varName>body</con1:varName>
+                                    <con1:location>
+                                        <con2:xpathText>./typ:ValidateAddressResponse</con2:xpathText>
+                                    </con1:location>
+                                </con1:validate>
+                            </con3:actions>
+                        </con3:case>
+                    </con6:ifThenElse>
+                </con:actions>
+            </con:stage>
+            <con:stage id="_StageId-N53efdcf3.41a90d0f.0.14f46ab86bf.N7d89" name="StageDeleteAuxVar">
+                <con:context/>
+                <con:actions>
+                    <con1:delete varName="headerResponse">
+                        <con2:id>_ActionId-N53efdcf3.41a90d0f.0.14f46ab86bf.N7d88</con2:id>
+                    </con1:delete>
+                    <con1:delete varName="bodyReq">
+                        <con2:id>_ActionId-N53efdcf3.41a90d0f.0.14f46ab86bf.N7d87</con2:id>
+                    </con1:delete>
+                    <con1:delete varName="reqTransactionID">
+                        <con2:id>_ActionId-N53efdcf3.41a90d0f.0.14f46ab86bf.N7d86</con2:id>
+                    </con1:delete>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="request" name="request-N3f57c7ff.N4d3607bc.0.14fae3b7be7.N7ffe">
+            <con:stage id="_StageId-N3f57c7ff.N4d3607bc.0.14fae3b7be7.N7b49" name="StageReplaceRequestLegacy">
+                <con:context>
+                    <con2:userNsDecl prefix="v1" namespace="http://telefonica.cl/TefRequestHeader/V1"/>
+                    <con2:userNsDecl prefix="typ" namespace="http://telefonica.cl/LocationManagement/Address/V1/types"/>
+                </con:context>
+                <con:actions>
+                    <con1:ifThenElse>
+                        <con2:id>_ActionId-N3f57c7ff.N4d3607bc.0.14fae3b7be7.N797c</con2:id>
+                        <con1:case id="_BranchId-N3f57c7ff.N4d3607bc.0.14fae3b7be7.N797b">
+                            <con1:condition>
+                                <con2:xqueryText>fn:data($bodyReq/typ:ValidateAddressRequest/typ:ValidateAddressRequest_data/typ:isForShipment) != fn:true()</con2:xqueryText>
+                            </con1:condition>
+                            <con1:actions>
+                                <con1:replace varName="body" contents-only="true">
+                                    <con2:id>_ActionId-N53efdcf3.41a90d0f.0.14f46ab86bf.N7b6d</con2:id>
+                                    <con1:location>
+                                        <con2:xpathText>.</con2:xpathText>
+                                    </con1:location>
+                                    <con1:expr>
+                                        <con2:xqueryTransform>
+                                            <con2:resource ref="Address/XQueries/validateChileanAddress/xq_validateChileanAddress_validarDireccionNormalizada_req"/>
+                                            <con2:param name="req">
+                                                <con2:path>$bodyReq/typ:ValidateAddressRequest</con2:path>
+                                            </con2:param>
+                                        </con2:xqueryTransform>
+                                    </con1:expr>
+                                </con1:replace>
+                            </con1:actions>
+                        </con1:case>
+                        <con1:default>
+                            <con1:replace varName="body" contents-only="true">
+                                <con2:id>_ActionId-N3f57c7ff.N4d3607bc.0.14fae3b7be7.N7947</con2:id>
+                                <con1:location>
+                                    <con2:xpathText>.</con2:xpathText>
+                                </con1:location>
+                                <con1:expr>
+                                    <con2:xqueryTransform>
+                                        <con2:resource ref="Address/XQueries/validateChileanAddress/xq_validateChileanAddress_retrieveAddressInformation_req"/>
+                                        <con2:param name="idMessage">
+                                            <con2:path>$reqTransactionID</con2:path>
+                                        </con2:param>
+                                        <con2:param name="req">
+                                            <con2:path>$body/typ:ValidateAddressRequest</con2:path>
+                                        </con2:param>
+                                    </con2:xqueryTransform>
+                                </con1:expr>
+                            </con1:replace>
+                        </con1:default>
+                    </con1:ifThenElse>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="response" name="response-N3f57c7ff.N4d3607bc.0.14fae3b7be7.N7ffd">
+            <con:stage id="_StageId-N3f57c7ff.N4d3607bc.0.14fae3b7be7.N7a82" name="StageReplaceResponseLegacy">
+                <con:context>
+                    <con2:userNsDecl prefix="v1" namespace="http://telefonica.cl/TefRequestHeader/V1"/>
+                    <con2:userNsDecl prefix="tef" namespace="http://telefonica.latam.cl/ServiceOrderManagement/ServiceAvailability/ServiceAddressValidation/ValidarDireccionNormalizada/types"/>
+                    <con2:userNsDecl prefix="typ" namespace="http://telefonica.cl/LocationManagement/Address/V1/types"/>
+                </con:context>
+                <con:actions>
+                    <con1:ifThenElse>
+                        <con2:id>_ActionId-N53efdcfe.7dc6e703.0.14ff594b285.N7ddb</con2:id>
+                        <con1:case id="_BranchId-N53efdcfe.7dc6e703.0.14ff594b285.N7dda">
+                            <con1:condition>
+                                <con2:xqueryText>fn:data($bodyReq/typ:ValidateAddressRequest/typ:ValidateAddressRequest_data/typ:isForShipment) != fn:true()</con2:xqueryText>
+                            </con1:condition>
+                            <con1:actions>
+                                <con1:replace varName="body" contents-only="true">
+                                    <con2:id>_ActionId-N53efdcf3.41a90d0f.0.14f46ab86bf.N7b6a</con2:id>
+                                    <con1:location>
+                                        <con2:xpathText>.</con2:xpathText>
+                                    </con1:location>
+                                    <con1:expr>
+                                        <con2:xqueryTransform>
+                                            <con2:resource ref="Address/XQueries/validateChileanAddress/xq_validateChileanAddress_validarDireccionNormalizada_res"/>
+                                            <con2:param name="idMessage">
+                                                <con2:path>fn:data($bodyReq/typ:ValidateAddressRequest/v1:TefHeaderReq/v1:idMessage)</con2:path>
+                                            </con2:param>
+                                            <con2:param name="res">
+                                                <con2:path>$body/tef:ValidarDireccionNormalizadaResponse</con2:path>
+                                            </con2:param>
+                                            <con2:param name="transactionID">
+                                                <con2:path>$transactionID</con2:path>
+                                            </con2:param>
+                                            <con2:param name="serviceName">
+                                                <con2:path>fn:data($bodyReq/typ:ValidateAddressRequest/v1:TefHeaderReq/v1:serviceName)</con2:path>
+                                            </con2:param>
+                                        </con2:xqueryTransform>
+                                    </con1:expr>
+                                </con1:replace>
+                            </con1:actions>
+                        </con1:case>
+                        <con1:default>
+                            <con1:replace varName="body" contents-only="true">
+                                <con2:id>_ActionId-N53efdcf3.41a90d0f.0.14f46ab86bf.N7b65</con2:id>
+                                <con1:location>
+                                    <con2:xpathText>.</con2:xpathText>
+                                </con1:location>
+                                <con1:expr>
+                                    <con2:xqueryTransform>
+                                        <con2:resource ref="Address/XQueries/validateChileanAddress/xq_validateChileanAddress_retrieveAddressInformation_res"/>
+                                        <con2:param name="idMessage">
+                                            <con2:path>fn:data($bodyReq/typ:ValidateAddressRequest/v1:TefHeaderReq/v1:idMessage)</con2:path>
+                                        </con2:param>
+                                        <con2:param name="res">
+                                            <con2:path>$body/typ:RetrieveAddressInformationResponse</con2:path>
+                                        </con2:param>
+                                        <con2:param name="transactionID">
+                                            <con2:path>$transactionID</con2:path>
+                                        </con2:param>
+                                        <con2:param name="serviceName">
+                                            <con2:path>fn:data($bodyReq/typ:ValidateAddressRequest/v1:TefHeaderReq/v1:serviceName)</con2:path>
+                                        </con2:param>
+                                    </con2:xqueryTransform>
+                                </con1:expr>
+                            </con1:replace>
+                        </con1:default>
+                    </con1:ifThenElse>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="request" name="request-N53efdcfe.7dc6e703.0.14ff594b285.N7dd4">
+            <con:stage id="_StageId-N53efdcfe.7dc6e703.0.14ff594b285.N7d93" name="LegacyCalloutBranchStage">
+                <con:context>
+                    <con2:userNsDecl prefix="amd" namespace="http://telefonica.cl/LocationManagement/Address/V1/types"/>
+                </con:context>
+                <con:actions>
+                    <con1:ifThenElse>
+                        <con2:id>_ActionId-N53efdcf3.41a90d0f.0.14f46ab86bf.N7b70</con2:id>
+                        <con1:case id="_BranchId-N53efdcf3.41a90d0f.0.14f46ab86bf.N7b6f">
+                            <con1:condition>
+                                <con2:xqueryText>fn:data($bodyReq/amd:ValidateAddressRequest/amd:ValidateAddressRequest_data/amd:isForShipment) != fn:true()</con2:xqueryText>
+                            </con1:condition>
+                            <con1:actions>
+                                <con1:wsCallout>
+                                    <con2:id>_ActionId-N53efdcf3.41a90d0f.0.14f46ab86bf.N7b6e</con2:id>
+                                    <con1:service ref="TelefonicaAddress/BusinessServices/INT_ValidarDireccionNormalizada" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                                    <con1:operation>ValidarDireccionNormalizada</con1:operation>
+                                    <con1:request>
+                                        <con1:body wrapped="true">body</con1:body>
+                                    </con1:request>
+                                    <con1:response>
+                                        <con1:body wrapped="true">body</con1:body>
+                                    </con1:response>
+                                    <con1:requestTransform>
+                                        <con5:assign varName="serviceRoute" xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con5="http://www.bea.com/wli/sb/stages/transform/config">
+                                            <con2:id>_ActionId-a00020f.N12264ec2.4.15528f337ba.N7e0a</con2:id>
+                                            <con1:expr>
+                                                <con2:xqueryTransform>
+                                                    <con2:resource ref="AmdocsCommon/XQueries/GetRoutingInfo"/>
+                                                    <con2:param name="routingId">
+                                                        <con2:path>'091'</con2:path>
+                                                    </con2:param>
+                                                    <con2:param name="type">
+                                                        <con2:path>'WS'</con2:path>
+                                                    </con2:param>
+                                                </con2:xqueryTransform>
+                                            </con1:expr>
+                                        </con5:assign>
+                                        <con5:routing-options xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config" xmlns:con5="http://www.bea.com/wli/sb/stages/transform/config">
+                                            <con2:id>_ActionId-a00020f.N12264ec2.4.15528f337ba.N7dd7</con2:id>
+                                            <con1:uriExpr>
+                                                <con2:xqueryText>$serviceRoute</con2:xqueryText>
+                                            </con1:uriExpr>
+                                        </con5:routing-options>
+                                        <con2:ifThenElse xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/typesystem/config">
+                                            <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.12cf100f.0.1554a5e7d1c.N7acc</con6:id>
+                                            <con2:case id="_BranchId-a00020f.12cf100f.0.1554a5e7d1c.N7acb">
+                                                <con2:condition>
+                                                    <con3:xqueryText xmlns:con3="http://www.bea.com/wli/sb/stages/config">$traceLevel = "DEBUG"</con3:xqueryText>
+                                                </con2:condition>
+                                                <con2:actions>
+                                                    <con2:assign varName="BackEndId">
+                                                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.12cf100f.0.1554a5e7d1c.N7aca</con6:id>
+                                                        <con2:expr>
+                                                            <con3:xqueryText xmlns:con3="http://www.bea.com/wli/sb/stages/config">fn-bea:uuid()</con3:xqueryText>
+                                                        </con2:expr>
+                                                    </con2:assign>
+                                                    <con2:assign varName="BackEndInput">
+                                                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.12cf100f.0.1554a5e7d1c.N7ac9</con6:id>
+                                                        <con2:expr>
+                                                            <con6:xqueryTransform xmlns:con6="http://www.bea.com/wli/sb/stages/config">
+                                                                <con6:resource ref="AmdocsCommon/XQueries/CreateTraceMessage"/>
+                                                                <con6:param name="parentId">
+                                                                    <con6:path>$esbMessageID</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="application">
+                                                                    <con6:path>""</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="transactionId">
+                                                                    <con6:path>$BackEndId</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="environment">
+                                                                    <con6:path>""</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="esbcontext">
+                                                                    <con6:path>$esbContext</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="layer">
+                                                                    <con6:path>"IntegrationLayer"</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="catalogId">
+                                                                    <con6:path>404</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="payload">
+                                                                    <con6:path>fn-bea:serialize($body/*[1])</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="referenceId">
+                                                                    <con6:path>""</con6:path>
+                                                                </con6:param>
+                                                            </con6:xqueryTransform>
+                                                        </con2:expr>
+                                                    </con2:assign>
+                                                    <con3:route xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config">
+                                                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.12cf100f.0.1554a5e7d1c.N7ac8</con6:id>
+                                                        <con3:service ref="AmdocsCommon/BusinessServices/EsbTraceBS" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                                                        <con3:outboundTransform>
+                                                            <con2:replace varName="body" contents-only="true" xmlns:con4="http://www.bea.com/wli/sb/stages/transform/config">
+                                                                <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.12cf100f.0.1554a5e7d1c.N7ac7</con6:id>
+                                                                <con2:expr>
+                                                                    <con6:xqueryText xmlns:con6="http://www.bea.com/wli/sb/stages/config">$BackEndInput</con6:xqueryText>
+                                                                </con2:expr>
+                                                            </con2:replace>
+                                                        </con3:outboundTransform>
+                                                    </con3:route>
+                                                </con2:actions>
+                                            </con2:case>
+                                        </con2:ifThenElse>
+                                    </con1:requestTransform>
+                                    <con1:responseTransform>
+                                        <con2:ifThenElse xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/typesystem/config">
+                                            <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.12cf100f.0.1554a5e7d1c.N7a54</con6:id>
+                                            <con2:case id="_BranchId-a00020f.12cf100f.0.1554a5e7d1c.N7a53">
+                                                <con2:condition>
+                                                    <con3:xqueryText xmlns:con3="http://www.bea.com/wli/sb/stages/config">$traceLevel = "DEBUG"</con3:xqueryText>
+                                                </con2:condition>
+                                                <con2:actions>
+                                                    <con2:assign varName="BackEndOutput">
+                                                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.12cf100f.0.1554a5e7d1c.N7a52</con6:id>
+                                                        <con2:expr>
+                                                            <con6:xqueryTransform xmlns:con6="http://www.bea.com/wli/sb/stages/config">
+                                                                <con6:resource ref="AmdocsCommon/XQueries/CreateTraceMessage"/>
+                                                                <con6:param name="parentId">
+                                                                    <con6:path>$esbMessageID</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="application">
+                                                                    <con6:path>""</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="transactionId">
+                                                                    <con6:path>$BackEndId</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="environment">
+                                                                    <con6:path>""</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="esbcontext">
+                                                                    <con6:path>$esbContext</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="layer">
+                                                                    <con6:path>"IntegrationLayer"</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="catalogId">
+                                                                    <con6:path>405</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="payload">
+                                                                    <con6:path>fn-bea:serialize($body/*[1])</con6:path>
+                                                                </con6:param>
+                                                                <con6:param name="referenceId">
+                                                                    <con6:path>""</con6:path>
+                                                                </con6:param>
+                                                            </con6:xqueryTransform>
+                                                        </con2:expr>
+                                                    </con2:assign>
+                                                    <con3:route xmlns:con3="http://www.bea.com/wli/sb/stages/publish/config">
+                                                        <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.12cf100f.0.1554a5e7d1c.N7a51</con6:id>
+                                                        <con3:service ref="AmdocsCommon/BusinessServices/EsbTraceBS" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                                                        <con3:outboundTransform>
+                                                            <con2:replace varName="body" contents-only="true" xmlns:con4="http://www.bea.com/wli/sb/stages/transform/config">
+                                                                <con6:id xmlns:con6="http://www.bea.com/wli/sb/stages/config">_ActionId-a00020f.12cf100f.0.1554a5e7d1c.N7a50</con6:id>
+                                                                <con2:expr>
+                                                                    <con6:xqueryText xmlns:con6="http://www.bea.com/wli/sb/stages/config">$BackEndOutput</con6:xqueryText>
+                                                                </con2:expr>
+                                                            </con2:replace>
+                                                        </con3:outboundTransform>
+                                                    </con3:route>
+                                                </con2:actions>
+                                            </con2:case>
+                                        </con2:ifThenElse>
+                                    </con1:responseTransform>
+                                </con1:wsCallout>
+                            </con1:actions>
+                        </con1:case>
+                        <con1:default>
+                            <con1:wsCallout>
+                                <con2:id>_ActionId-N53efdcf3.41a90d0f.0.14f46ab86bf.N7b69</con2:id>
+                                <con1:service ref="Address/Pipelines/retrieveAddressInformation_local" xsi:type="con:PipelineRef"/>
+                                <con1:operation>validateAddress</con1:operation>
+                                <con1:request>
+                                    <con1:body wrapped="true">body</con1:body>
+                                </con1:request>
+                                <con1:response>
+                                    <con1:body wrapped="true">body</con1:body>
+                                </con1:response>
+                                <con1:requestTransform>
+                                    <con6:transport-headers copy-all="true" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con6="http://www.bea.com/wli/sb/stages/transform/config">
+                                        <con2:id>_ActionId-N53efdcfe.N2ad4e1b9.0.14fb806a1c1.N7a0b</con2:id>
+                                        <con3:header-set>outbound-request</con3:header-set>
+                                        <con3:header value="expression" name="transactionID">
+                                            <con2:xqueryText>$transactionID</con2:xqueryText>
+                                        </con3:header>
+                                    </con6:transport-headers>
+                                </con1:requestTransform>
+                                <con1:responseTransform/>
+                            </con1:wsCallout>
+                        </con1:default>
+                    </con1:ifThenElse>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="response" name="response-N53efdcfe.7dc6e703.0.14ff594b285.N7dd3"/>
+        <con:flow>
+            <con:pipeline-node name="EXP_validateChileanAddressPPN">
+                <con:request>request-N3f57fe05.6970dcc7.0.14eff10279c.N63b0</con:request>
+                <con:response>response-N3f57fe05.6970dcc7.0.14eff10279c.N639f</con:response>
+            </con:pipeline-node>
+            <con:pipeline-node name="LegacyTransformationsPPN">
+                <con:request>request-N3f57c7ff.N4d3607bc.0.14fae3b7be7.N7ffe</con:request>
+                <con:response>response-N3f57c7ff.N4d3607bc.0.14fae3b7be7.N7ffd</con:response>
+            </con:pipeline-node>
+            <con:pipeline-node name="LegacyCalloutsPPN">
+                <con:request>request-N53efdcfe.7dc6e703.0.14ff594b285.N7dd4</con:request>
+                <con:response>response-N53efdcfe.7dc6e703.0.14ff594b285.N7dd3</con:response>
+            </con:pipeline-node>
+        </con:flow>
+    </con:router>
+</con:pipelineEntry>
