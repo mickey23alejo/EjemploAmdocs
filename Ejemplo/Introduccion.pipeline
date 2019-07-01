@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:pipelineEntry xmlns:con="http://www.bea.com/wli/sb/pipeline/config" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config">
+    <con:coreEntry>
+        <con:binding type="Any XML"/>
+        <con:xqConfiguration>
+            <con:snippetVersion>1.0</con:snippetVersion>
+        </con:xqConfiguration>
+    </con:coreEntry>
+    <con:router>
+        <con:pipeline type="request" name="request-N3f57c7ff.N1288134e.0.16badc7bc41.N7f9a">
+            <con:stage id="_StageId-N3f57c7ff.N1288134e.0.16badc7bc41.N7f98" name="Stage1">
+                <con:context/>
+                <con:actions>
+                    <con1:assign varName="Valor1">
+                        <con2:id>_ActionId-N3f57c7ff.N1288134e.0.16badc7bc41.N7f64</con2:id>
+                        <con1:expr>
+                            <con2:xqueryText>$body</con2:xqueryText>
+                        </con1:expr>
+                    </con1:assign>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="response" name="response-N3f57c7ff.N1288134e.0.16badc7bc41.N7f99">
+            <con:stage id="_StageId-N3f57c7ff.N1288134e.0.16badc7bc41.N7f97" name="Stage1">
+                <con:context/>
+                <con:actions>
+                    <con1:assign varName="Valor2">
+                        <con2:id>_ActionId-N3f57c7ff.N1288134e.0.16badc7bc41.N7f31</con2:id>
+                        <con1:expr>
+                            <con2:xqueryText>$body</con2:xqueryText>
+                        </con1:expr>
+                    </con1:assign>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:flow>
+            <con:pipeline-node name="PipelinePairNode1">
+                <con:request>request-N3f57c7ff.N1288134e.0.16badc7bc41.N7f9a</con:request>
+                <con:response>response-N3f57c7ff.N1288134e.0.16badc7bc41.N7f99</con:response>
+            </con:pipeline-node>
+        </con:flow>
+    </con:router>
+</con:pipelineEntry>
