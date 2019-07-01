@@ -16,43 +16,4 @@
     <packaging>sbar</packaging>
 
     <description/>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.oracle.adf.plugin</groupId>
-                <artifactId>ojdeploy</artifactId>
-                <version>12.2.1-0-0</version>
-                <configuration>
-                    <ojdeploy>
-                        ${oracleHome}/jdeveloper/jdev/bin/ojdeploy.exe
-                    </ojdeploy>
-                    <workspace>
-                        ${basedir}/../Ejemplo3.jws
-                    </workspace>
-                    <project>
-                        Ejemplo
-                    </project>
-                    <profile>
-                        Ejemplo
-                    </profile>
-                    <outputfile>
-                        ${project.build.directory}/${project.build.finalName}.${project.packaging}
-                    </outputfile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>deploy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-    <properties>
-        <oracleHome>
-            ${env.ORACLE_HOME}
-        </oracleHome>
-    </properties>
 </project>
